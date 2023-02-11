@@ -1,6 +1,7 @@
 package br.dev.pauloroberto.algafood.jpa;
 
 import br.dev.pauloroberto.algafood.AlgaworksAlgafoodApplication;
+import br.dev.pauloroberto.algafood.domain.repository.CozinhaRepository;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContext;
@@ -11,8 +12,8 @@ public class ConsultaCozinhaMain {
                 .web(WebApplicationType.NONE)
                 .run(args);
 
-        CadastroCozinha cadastroCozinha = applicationContext.getBean(CadastroCozinha.class);
-        cadastroCozinha.listar()
+        CozinhaRepository cozinhaRepository = applicationContext.getBean(CozinhaRepository.class);
+        cozinhaRepository.listar()
                 .forEach(cozinha -> System.out.println(cozinha.getNome()));
     }
 }
