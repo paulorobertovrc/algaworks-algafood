@@ -15,4 +15,8 @@ public class Estado {
     private Long id;
     @Column(nullable = false)
     private String nome;
+
+    public void setEstado(EstadosEnum estado) {
+        this.nome = estado.getDescricao();
+    }
 }
