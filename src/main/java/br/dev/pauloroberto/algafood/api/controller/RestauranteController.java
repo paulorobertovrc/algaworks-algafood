@@ -12,6 +12,7 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -38,6 +39,31 @@ public class RestauranteController {
                 .orElseGet(() -> ResponseEntity.notFound().build()
                 );
 
+    }
+
+    @GetMapping("/por-taxa-frete")
+    public List<Restaurante> buscarPorTaxaFrete(@RequestParam BigDecimal taxaInicial, @RequestParam BigDecimal taxaFinal) {
+        return restauranteRepository.findByTaxaFreteBetween(taxaInicial, taxaFinal);
+    }
+
+    @GetMapping("/por-nome")
+    public List<Restaurante> buscarPorNome(@RequestParam String nome, Long cozinhaId) {
+        return restauranteRepository.findByNomeContainingAndCozinhaId(nome, cozinhaId);
+    }
+
+    @GetMapping("/primeiro-por-nome")
+    public Optional<Restaurante> buscarPrimeiroPorNome(@RequestParam String nome) {
+        return restauranteRepository.findFirstRestauranteByNomeContaining(nome);
+    }
+
+    @GetMapping("/top2-por-nome")
+    public List<Restaurante> buscarTop2PorNome(@RequestParam String nome) {
+        return restauranteRepository.findTop2ByNomeContaining(nome);
+    }
+
+    @GetMapping("/contagem-por-cozinha")
+    public int buscarContagemPorCozinha(@RequestParam Long cozinhaId) {
+        return restauranteRepository.countByCozinhaId(cozinhaId);
     }
 
     @PostMapping

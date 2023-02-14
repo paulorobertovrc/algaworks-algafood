@@ -35,6 +35,26 @@ public class CozinhaController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/por-nome")
+    public ResponseEntity<List<Cozinha>> buscarTodasPorNome(@RequestParam String nome) {
+        List<Cozinha> cozinhas = cozinhaRepository.findTodasByNomeContaining(nome);
+
+        return cozinhas.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(cozinhas);
+    }
+
+    @GetMapping("/por-nome-exato")
+    public ResponseEntity<Cozinha> buscarPorNomeExato(@RequestParam String nome) {
+        Optional<Cozinha> cozinha = cozinhaRepository.findByNome(nome);
+
+        return cozinha.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/existe-por-nome")
+    public ResponseEntity<Boolean> existePorNome(@RequestParam String nome) {
+        return ResponseEntity.ok(cozinhaRepository.existsByNomeContaining(nome));
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Cozinha adicionar(@RequestBody Cozinha cozinha) {
