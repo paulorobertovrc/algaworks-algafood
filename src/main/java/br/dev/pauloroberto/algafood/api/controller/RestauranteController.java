@@ -48,7 +48,7 @@ public class RestauranteController {
 
     @GetMapping("/por-nome")
     public List<Restaurante> buscarPorNome(@RequestParam String nome, Long cozinhaId) {
-        return restauranteRepository.findByNomeContainingAndCozinhaId(nome, cozinhaId);
+        return restauranteRepository.consultarPorNome(nome, cozinhaId);
     }
 
     @GetMapping("/primeiro-por-nome")
