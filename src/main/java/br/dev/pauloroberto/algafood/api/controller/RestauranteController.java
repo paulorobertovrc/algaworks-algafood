@@ -4,6 +4,8 @@ import br.dev.pauloroberto.algafood.domain.exception.EntidadeNaoEncontradaExcept
 import br.dev.pauloroberto.algafood.domain.model.Restaurante;
 import br.dev.pauloroberto.algafood.domain.repository.RestauranteRepository;
 import br.dev.pauloroberto.algafood.domain.service.CadastroRestauranteService;
+import br.dev.pauloroberto.algafood.infrastructure.repository.spec.RestauranteComFreteGratisSpec;
+import br.dev.pauloroberto.algafood.infrastructure.repository.spec.RestauranteComNomeSemelhanteSpec;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -71,6 +73,14 @@ public class RestauranteController {
                                                BigDecimal taxaFreteInicial,
                                                BigDecimal taxaFreteFinal) {
         return restauranteRepository.buscaCustomizada(nome, taxaFreteInicial, taxaFreteFinal);
+    }
+
+    @GetMapping("/com-frete-gratis")
+    public List<Restaurante> restaurantesComFreteGratis(String nome) {
+        var comFreteGratis = new RestauranteComFreteGratisSpec();
+        var comNomeSemelhante = new RestauranteComNomeSemelhanteSpec(nome);
+
+        return restauranteRepository.findAll(comFreteGratis.and(comNomeSemelhante));
     }
 
     @PostMapping
