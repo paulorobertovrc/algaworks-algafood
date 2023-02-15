@@ -67,9 +67,9 @@ public class RestauranteController {
     }
 
     @GetMapping("/busca-customizada")
-    public List<Restaurante> buscarCustomizada(@RequestParam String nome,
-                                               @RequestParam BigDecimal taxaFreteInicial,
-                                               @RequestParam BigDecimal taxaFreteFinal) {
+    public List<Restaurante> buscarCustomizada(String nome,
+                                               BigDecimal taxaFreteInicial,
+                                               BigDecimal taxaFreteFinal) {
         return restauranteRepository.buscaCustomizada(nome, taxaFreteInicial, taxaFreteFinal);
     }
 
