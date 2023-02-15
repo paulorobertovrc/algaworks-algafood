@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface RestauranteRepository extends JpaRepository<Restaurante, Long> {
+public interface RestauranteRepository extends JpaRepository<Restaurante, Long>, RestauranteCustomizedRepository {
     List<Restaurante> findByTaxaFreteBetween(BigDecimal taxaInicial, BigDecimal taxaFinal);
     List<Restaurante> consultarPorNome(String nome, Long cozinhaId);
     Optional<Restaurante> findFirstRestauranteByNomeContaining(String nome);

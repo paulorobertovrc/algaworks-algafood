@@ -66,6 +66,13 @@ public class RestauranteController {
         return restauranteRepository.countByCozinhaId(cozinhaId);
     }
 
+    @GetMapping("/busca-customizada")
+    public List<Restaurante> buscarCustomizada(@RequestParam String nome,
+                                               @RequestParam BigDecimal taxaFreteInicial,
+                                               @RequestParam BigDecimal taxaFreteFinal) {
+        return restauranteRepository.buscaCustomizada(nome, taxaFreteInicial, taxaFreteFinal);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> adicionar(@RequestBody Restaurante restaurante) {
