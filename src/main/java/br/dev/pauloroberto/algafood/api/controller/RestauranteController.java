@@ -78,6 +78,11 @@ public class RestauranteController {
         return restauranteRepository.findComFreteGratis(nome);
     }
 
+    @GetMapping("/primeiro")
+    public Optional<Restaurante> buscarPrimeiro() {
+        return restauranteRepository.buscarPrimeiro();
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> adicionar(@RequestBody Restaurante restaurante) {
