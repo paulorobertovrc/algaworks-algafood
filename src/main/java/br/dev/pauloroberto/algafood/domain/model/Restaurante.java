@@ -3,9 +3,12 @@ package br.dev.pauloroberto.algafood.domain.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +30,14 @@ public class Restaurante {
     @JsonIgnore
     @Embedded
     private Endereco endereco;
+    @JsonIgnore
+    @Column(nullable = false, columnDefinition = "datetime")
+    @CreationTimestamp
+    private LocalDateTime dataCadastro;
+    @JsonIgnore
+    @Column(nullable = false, columnDefinition = "datetime")
+    @UpdateTimestamp
+    private LocalDateTime dataAtualizacao;
     @JsonIgnore
     @ManyToMany
     @JoinTable(name = "restaurante_forma_pagamento",
