@@ -2,6 +2,7 @@ package br.dev.pauloroberto.algafood.domain.repository;
 
 import br.dev.pauloroberto.algafood.domain.model.Restaurante;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
@@ -13,6 +14,8 @@ public interface RestauranteRepository
         extends CustomJpaRepository<Restaurante, Long>, RestauranteCustomizedRepository,
         JpaSpecificationExecutor<Restaurante>
 {
+    @Query("select distinct r from Restaurante r join fetch r.cozinha left join fetch r.formasPagamento")
+    List<Restaurante> findAll();
     List<Restaurante> findByTaxaFreteBetween(BigDecimal taxaInicial, BigDecimal taxaFinal);
     List<Restaurante> consultarPorNome(String nome, Long cozinhaId);
     Optional<Restaurante> findFirstRestauranteByNomeContaining(String nome);
