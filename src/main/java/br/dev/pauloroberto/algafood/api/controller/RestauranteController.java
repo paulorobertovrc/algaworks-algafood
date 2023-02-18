@@ -1,5 +1,7 @@
 package br.dev.pauloroberto.algafood.api.controller;
 
+import br.dev.pauloroberto.algafood.domain.exception.EntidadeNaoEncontradaException;
+import br.dev.pauloroberto.algafood.domain.exception.NegocioException;
 import br.dev.pauloroberto.algafood.domain.model.Restaurante;
 import br.dev.pauloroberto.algafood.domain.repository.RestauranteRepository;
 import br.dev.pauloroberto.algafood.domain.service.CadastroRestauranteService;
@@ -80,16 +82,24 @@ public class RestauranteController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Restaurante adicionar(@RequestBody Restaurante restaurante) {
-        return cadastroRestauranteService.salvar(restaurante);
+        try {
+            return cadastroRestauranteService.salvar(restaurante);
+        } catch (EntidadeNaoEncontradaException e) {
+            throw new NegocioException(e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")
     public Restaurante atualizar(@PathVariable Long id, @RequestBody Restaurante restauranteAtualizado) {
         Restaurante restaurante = cadastroRestauranteService.verificarSeExiste(id);
 
-        BeanUtils.copyProperties(restauranteAtualizado, restaurante, "id", "formasPagamento", "endereco", "dataCadastro");
+        BeanUtils.copyProperties(restauranteAtualizado, restaurante, "id", "formasPagamento", "endereco", "dataCadastro", "produtos");
 
-        return cadastroRestauranteService.salvar(restaurante);
+        try {
+            return cadastroRestauranteService.salvar(restaurante);
+        } catch (EntidadeNaoEncontradaException e) {
+            throw new NegocioException(e.getMessage());
+        }
     }
 
     @PatchMapping("/{id}")
