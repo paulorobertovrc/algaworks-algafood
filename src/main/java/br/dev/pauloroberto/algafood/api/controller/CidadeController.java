@@ -1,6 +1,6 @@
 package br.dev.pauloroberto.algafood.api.controller;
 
-import br.dev.pauloroberto.algafood.domain.exception.EntidadeNaoEncontradaException;
+import br.dev.pauloroberto.algafood.domain.exception.EstadoNaoEncontradoException;
 import br.dev.pauloroberto.algafood.domain.exception.NegocioException;
 import br.dev.pauloroberto.algafood.domain.model.Cidade;
 import br.dev.pauloroberto.algafood.domain.service.CadastroCidadeService;
@@ -33,21 +33,20 @@ public class CidadeController {
     public Cidade adicionar(@RequestBody Cidade cidade) {
         try {
             return cadastroCidadeService.salvar(cidade);
-        } catch (EntidadeNaoEncontradaException e) {
-            throw new NegocioException(e.getMessage());
+        } catch (EstadoNaoEncontradoException e) {
+            throw new NegocioException(e.getMessage(), e);
         }
     }
 
     @PutMapping("/{id}")
     public Cidade atualizar(@PathVariable Long id, @RequestBody Cidade cidadeAtualizada) {
+        try {
         Cidade cidade = cadastroCidadeService.verificarSeExiste(id);
-
         BeanUtils.copyProperties(cidadeAtualizada, cidade, "id");
 
-        try {
-            return cadastroCidadeService.salvar(cidade);
-        } catch (EntidadeNaoEncontradaException e) {
-            throw new NegocioException(e.getMessage());
+        return cadastroCidadeService.salvar(cidade);
+        } catch (EstadoNaoEncontradoException e) {
+            throw new NegocioException(e.getMessage(), e);
         }
     }
 
