@@ -17,6 +17,6 @@ public class Estado {
     private String nome;
 
     public void setEstado(EstadosEnum estado) {
-        this.nome = estado.getDescricao();
+        this.nome = estado.toString();
     }
 }

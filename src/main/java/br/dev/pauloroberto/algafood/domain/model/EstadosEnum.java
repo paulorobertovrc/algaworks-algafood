@@ -38,4 +38,13 @@ public enum EstadosEnum {
     public String getDescricao() {
         return descricao;
     }
+
+    public static EstadosEnum fromDescricao(String nome) {
+        for (EstadosEnum estado : EstadosEnum.values()) {
+            if (estado.getDescricao().equals(nome)) {
+                return estado;
+            }
+        }
+        return null;
+    }
 }
