@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CadastroCozinhaService {
-    public static final String MSG_COZINHA_EM_USO = "A Cozinha de código %d não pode ser removida porque está em uso.";
-
     @Autowired
     private CozinhaRepository cozinhaRepository;
 
@@ -29,7 +27,7 @@ public class CadastroCozinhaService {
 
         } catch (DataIntegrityViolationException e) {
             throw new EntidadeEmUsoException(
-                    String.format(MSG_COZINHA_EM_USO, id)
+                    String.format("A Cozinha de código %d não pode ser removida porque está em uso", id)
             );
         }
     }
