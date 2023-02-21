@@ -1,5 +1,6 @@
 package br.dev.pauloroberto.algafood;
 
 public interface Groups {
-    interface CadastroRestaurante {}
+    interface CozinhaId {}
+    interface EstadoId {}
 }
