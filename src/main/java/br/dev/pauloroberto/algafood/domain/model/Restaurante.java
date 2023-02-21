@@ -1,5 +1,6 @@
 package br.dev.pauloroberto.algafood.domain.model;
 
+import br.dev.pauloroberto.algafood.Groups;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -7,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
@@ -24,14 +26,16 @@ public class Restaurante {
     @EqualsAndHashCode.Include
     private Long id;
     @Column(nullable = false)
-    @NotBlank
+    @NotBlank(groups = Groups.CadastroRestaurante.class)
     private String nome;
     @Column(name = "taxa_frete", nullable = false)
     @PositiveOrZero
-    @NotNull
+    @NotNull(groups = Groups.CadastroRestaurante.class)
     private BigDecimal taxaFrete;
     @ManyToOne
     @JoinColumn(name = "cozinha_id", nullable = false)
+    @NotNull(groups = Groups.CadastroRestaurante.class)
+    @Valid // @Valid para validar as propriedades do cozinha e não apenas o objeto cozinha
     private Cozinha cozinha;
     @JsonIgnore
     @Embedded
