@@ -7,6 +7,9 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,8 +24,11 @@ public class Restaurante {
     @EqualsAndHashCode.Include
     private Long id;
     @Column(nullable = false)
+    @NotBlank
     private String nome;
     @Column(name = "taxa_frete", nullable = false)
+    @PositiveOrZero
+    @NotNull
     private BigDecimal taxaFrete;
     @ManyToOne
     @JoinColumn(name = "cozinha_id", nullable = false)

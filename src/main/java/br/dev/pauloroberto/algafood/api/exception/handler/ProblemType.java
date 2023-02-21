@@ -11,7 +11,8 @@ public enum ProblemType {
         PARAMETRO_INVALIDO("/parametro-invalido", "Parâmetro inválido"),
         ERRO_DE_SISTEMA("/erro-de-sistema", "Erro de sistema"),
         MENSAGEM_INCOMPREENSIVEL("/mensagem-incompreensivel", "Mensagem incompreensível"),
-        ERRO_DE_VALIDACAO("/erro-de-validacao", "Erro de validação");
+        ERRO_DE_VALIDACAO("/erro-de-validacao", "Erro de validação"),
+        DADOS_INVALIDOS("/dados-invalidos", "Dados inválidos");
 
         private final String uri;
         private final String title;

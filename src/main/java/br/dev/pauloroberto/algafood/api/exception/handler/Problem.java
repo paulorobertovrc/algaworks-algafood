@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Getter
 @Builder
@@ -18,4 +19,13 @@ public class Problem {
 
     private String userMessage;
     private OffsetDateTime timestamp;
+
+    private List<Field> fields;
+
+    @Getter
+    @Builder
+    public static class Field {
+        private String name;
+        private String userMessage;
+    }
 }
