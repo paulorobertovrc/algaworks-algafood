@@ -19,11 +19,15 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
+
+    public static final String MSG_ERRO_DE_SISTEMA = "Erro interno inesperado. Tente novamente e, se o problema persistir, contate o administrador do sistema.";
 
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
     public ResponseEntity<?> handleEntidadeNaoEncontrada(EntidadeNaoEncontradaException e,
@@ -59,7 +63,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<?> handleUncaught(Exception e, WebRequest request) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         Problem problem = createProblemBuilder(status,
-                "Erro interno inesperado. Tente novamente e, se o problema persistir, contate o administrador do sistema.",
+                MSG_ERRO_DE_SISTEMA,
                 ProblemType.ERRO_DE_SISTEMA)
                 .build();
 
@@ -78,11 +82,13 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             body = Problem.builder()
                     .title(status.getReasonPhrase())
                     .status(status.value())
+                    .timestamp(OffsetDateTime.now().truncatedTo(ChronoUnit.SECONDS))
                     .build();
         } else if (body instanceof String) {
             body = Problem.builder()
                     .title((String) body)
                     .status(status.value())
+                    .timestamp(OffsetDateTime.now().truncatedTo(ChronoUnit.SECONDS))
                     .build();
         }
 
@@ -106,6 +112,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         Problem problem = createProblemBuilder(status,
                 "O corpo da requisição está inválido. Verifique erro de sintaxe.",
                 ProblemType.MENSAGEM_INCOMPREENSIVEL)
+                .userMessage(MSG_ERRO_DE_SISTEMA)
                 .build();
 
         return handleExceptionInternal(e, problem, headers, status, request);
@@ -133,6 +140,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 String.format("O recurso %s, que você tentou acessar, é inexistente.",
                         e.getRequestURL()),
                 ProblemType.RECURSO_NAO_ENCONTRADO)
+                .userMessage(MSG_ERRO_DE_SISTEMA)
                 .build();
 
         return handleExceptionInternal(e, problem, headers, status, request);
@@ -149,6 +157,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                         e.getValue(),
                         Objects.requireNonNull(e.getRequiredType()).getSimpleName()),
                 ProblemType.PARAMETRO_INVALIDO)
+                .userMessage(MSG_ERRO_DE_SISTEMA)
                 .build();
 
         return handleExceptionInternal(e, problem, headers, status, request);
@@ -165,6 +174,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                                 + "Corrija ou remova essa propriedade e tente novamente.",
                         path),
                 ProblemType.PARAMETRO_INVALIDO)
+                .userMessage(MSG_ERRO_DE_SISTEMA)
                 .build();
 
         return handleExceptionInternal(e, problem, headers, status, request);
@@ -183,6 +193,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                         e.getValue(),
                         e.getTargetType().getSimpleName()),
                 ProblemType.PARAMETRO_INVALIDO)
+                .userMessage(MSG_ERRO_DE_SISTEMA)
                 .build();
 
         return handleExceptionInternal(e, problem, headers, status, request);
@@ -202,6 +213,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .status(status.value())
                 .type(problemType.getUri())
                 .title(problemType.getTitle())
+                .timestamp(OffsetDateTime.now().truncatedTo(ChronoUnit.SECONDS))
                 .detail(detail);
     }
 
