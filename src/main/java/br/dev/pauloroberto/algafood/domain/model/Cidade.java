@@ -13,6 +13,7 @@ import javax.validation.groups.ConvertGroup;
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = "nome", name = "UK_nome_cidade_unico") })
 public class Cidade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

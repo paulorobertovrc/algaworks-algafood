@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = "nome", name = "UK_nome_estado_unico") })
 public class Estado {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

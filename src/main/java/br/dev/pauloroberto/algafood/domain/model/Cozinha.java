@@ -13,6 +13,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = "nome", name = "UK_nome_cozinha_unico") })
 public class Cozinha {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
