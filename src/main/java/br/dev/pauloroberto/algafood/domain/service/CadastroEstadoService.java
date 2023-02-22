@@ -26,7 +26,9 @@ public class CadastroEstadoService {
                 estado.setEstado(EstadosEnum.valueOf(estado.getNome()));
             }
         } catch (NullPointerException e) {
-            throw new NegocioException(String.format("Estado %s não encontrado", estado.getNome()), e);
+            throw new NegocioException(String.format("Estado %s não encontrado. Somente podem ser cadastrados estados válidos."
+                            + " Por favor, verifique o nome e tente novamente.",
+                    estado.getNome()), e);
         }
 
         return estadoRepository.save(estado);
