@@ -1,6 +1,6 @@
 package br.dev.pauloroberto.algafood.domain.model;
 
-import br.dev.pauloroberto.algafood.Groups;
+import br.dev.pauloroberto.algafood.core.validation.Groups;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

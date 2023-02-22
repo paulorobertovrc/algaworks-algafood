@@ -1,4 +1,4 @@
-package br.dev.pauloroberto.algafood;
+package br.dev.pauloroberto.algafood.core.validation;
 
 public interface Groups {
     interface CozinhaId {}
