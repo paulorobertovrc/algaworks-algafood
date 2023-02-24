@@ -1,8 +1,8 @@
 package br.dev.pauloroberto.algafood.domain.model;
 
 import br.dev.pauloroberto.algafood.core.validation.Groups;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -20,11 +20,11 @@ public class Cozinha {
     @EqualsAndHashCode.Include
     @NotNull(groups = Groups.CozinhaId.class)
     private Long id;
+
     @Column(nullable = false)
     @NotBlank
     private String nome;
 
-    @JsonIgnore // Ignora a propriedade no retorno da API e evita o loop infinito
     @OneToMany(mappedBy = "cozinha")
     private List<Restaurante> restaurantes = new ArrayList<>();
 }
