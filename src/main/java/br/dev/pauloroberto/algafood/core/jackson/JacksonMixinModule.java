@@ -4,10 +4,10 @@ import br.dev.pauloroberto.algafood.domain.model.Cidade;
 import br.dev.pauloroberto.algafood.domain.model.Cozinha;
 import br.dev.pauloroberto.algafood.domain.model.Produto;
 import br.dev.pauloroberto.algafood.domain.model.Restaurante;
-import br.dev.pauloroberto.algafood.domain.model.mixin.CidadeMixin;
-import br.dev.pauloroberto.algafood.domain.model.mixin.CozinhaMixin;
-import br.dev.pauloroberto.algafood.domain.model.mixin.ProdutoMixin;
-import br.dev.pauloroberto.algafood.domain.model.mixin.RestauranteMixin;
+import br.dev.pauloroberto.algafood.api.model.mixin.CidadeMixin;
+import br.dev.pauloroberto.algafood.api.model.mixin.CozinhaMixin;
+import br.dev.pauloroberto.algafood.api.model.mixin.ProdutoMixin;
+import br.dev.pauloroberto.algafood.api.model.mixin.RestauranteMixin;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,4 @@
-package br.dev.pauloroberto.algafood.domain.model.mixin;
+package br.dev.pauloroberto.algafood.api.model.mixin;
 
 import br.dev.pauloroberto.algafood.domain.model.Cozinha;
 import br.dev.pauloroberto.algafood.domain.model.Endereco;
