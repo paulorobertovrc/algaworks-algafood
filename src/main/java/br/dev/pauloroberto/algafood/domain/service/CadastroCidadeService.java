@@ -6,6 +6,7 @@ import br.dev.pauloroberto.algafood.domain.model.Estado;
 import br.dev.pauloroberto.algafood.domain.repository.CidadeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ public class CadastroCidadeService {
     @Autowired
     private CadastroEstadoService cadastroEstadoService;
 
+    @Transactional
     public Cidade salvar(Cidade cidade) {
         Long estadoId = cidade.getEstado().getId();
         Estado estado = cadastroEstadoService.verificarSeExiste(estadoId);
@@ -30,6 +32,7 @@ public class CadastroCidadeService {
         return cidadeRepository.findAll();
     }
 
+    @Transactional
     public void remover(Long id) {
         cidadeRepository.deleteById(id);
     }

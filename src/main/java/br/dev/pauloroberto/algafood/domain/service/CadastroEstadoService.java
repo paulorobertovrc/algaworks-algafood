@@ -7,6 +7,7 @@ import br.dev.pauloroberto.algafood.domain.model.EstadosEnum;
 import br.dev.pauloroberto.algafood.domain.repository.EstadoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
@@ -16,6 +17,7 @@ public class CadastroEstadoService {
     @Autowired
     private EstadoRepository estadoRepository;
 
+    @Transactional
     public Estado salvar(Estado estado) {
         try {
             if (estado.getNome().length() > 2) {
@@ -40,6 +42,7 @@ public class CadastroEstadoService {
                 );
     }
 
+    @Transactional
     public void excluir(Long id) {
         estadoRepository.deleteById(id);
     }
