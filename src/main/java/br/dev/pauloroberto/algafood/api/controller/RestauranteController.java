@@ -1,13 +1,12 @@
 package br.dev.pauloroberto.algafood.api.controller;
 
-import br.dev.pauloroberto.algafood.api.model.CozinhaDto;
+import br.dev.pauloroberto.algafood.api.assembler.RestauranteDomainObjectAssembler;
+import br.dev.pauloroberto.algafood.api.assembler.RestauranteDtoAssembler;
 import br.dev.pauloroberto.algafood.api.model.RestauranteDto;
-import br.dev.pauloroberto.algafood.api.model.input.CozinhaIdInputDto;
 import br.dev.pauloroberto.algafood.api.model.input.RestauranteInputDto;
 import br.dev.pauloroberto.algafood.domain.exception.EntidadeNaoEncontradaException;
 import br.dev.pauloroberto.algafood.domain.exception.NegocioException;
 import br.dev.pauloroberto.algafood.domain.exception.RestauranteNaoEncontradoException;
-import br.dev.pauloroberto.algafood.domain.model.Cozinha;
 import br.dev.pauloroberto.algafood.domain.model.Restaurante;
 import br.dev.pauloroberto.algafood.domain.repository.RestauranteRepository;
 import br.dev.pauloroberto.algafood.domain.service.CadastroRestauranteService;
@@ -38,33 +37,37 @@ public class RestauranteController {
     private RestauranteRepository restauranteRepository;
     @Autowired
     private CadastroRestauranteService cadastroRestauranteService;
+    @Autowired
+    private RestauranteDtoAssembler restauranteDtoAssembler;
+    @Autowired
+    private RestauranteDomainObjectAssembler restauranteDomainObjectAssembler;
 
     @GetMapping
     public List<RestauranteDto> listar() {
-        return toDtoList(restauranteRepository.findAll());
+        return restauranteDtoAssembler.toDtoList(restauranteRepository.findAll());
     }
 
     @GetMapping("/{id}")
     public RestauranteDto buscar(@PathVariable Long id) {
         Restaurante restaurante = cadastroRestauranteService.verificarSeExiste(id);
 
-        return toDto(restaurante);
+        return restauranteDtoAssembler.toDto(restaurante);
     }
 
     @GetMapping("/por-taxa-frete")
     public List<RestauranteDto> buscarPorTaxaFrete(@RequestParam BigDecimal taxaInicial,
                                                    @RequestParam BigDecimal taxaFinal) {
-        return toDtoList(restauranteRepository.findByTaxaFreteBetween(taxaInicial, taxaFinal));
+        return restauranteDtoAssembler.toDtoList(restauranteRepository.findByTaxaFreteBetween(taxaInicial, taxaFinal));
     }
 
     @GetMapping("/por-nome")
     public List<RestauranteDto> buscarPorNome(@RequestParam String nome, Long cozinhaId) {
-        return toDtoList(restauranteRepository.consultarPorNome(nome, cozinhaId));
+        return restauranteDtoAssembler.toDtoList(restauranteRepository.consultarPorNome(nome, cozinhaId));
     }
 
     @GetMapping("/primeiro-por-nome")
     public Optional<RestauranteDto> buscarPrimeiroPorNome(@RequestParam String nome) {
-        return Optional.of(toDto(restauranteRepository.findFirstRestauranteByNomeContaining(nome)
+        return Optional.of(restauranteDtoAssembler.toDto(restauranteRepository.findFirstRestauranteByNomeContaining(nome)
                 .orElseThrow(() -> new RestauranteNaoEncontradoException(
                         String.format("Não existe um restaurante com o nome %s", nome)
                 )))
@@ -73,7 +76,7 @@ public class RestauranteController {
 
     @GetMapping("/top2-por-nome")
     public List<RestauranteDto> buscarTop2PorNome(@RequestParam String nome) {
-        return toDtoList(restauranteRepository.findTop2ByNomeContaining(nome));
+        return restauranteDtoAssembler.toDtoList(restauranteRepository.findTop2ByNomeContaining(nome));
     }
 
     @GetMapping("/contagem-por-cozinha")
@@ -85,17 +88,17 @@ public class RestauranteController {
     public List<RestauranteDto> buscarCustomizada(String nome,
                                                BigDecimal taxaFreteInicial,
                                                BigDecimal taxaFreteFinal) {
-        return toDtoList(restauranteRepository.buscaCustomizada(nome, taxaFreteInicial, taxaFreteFinal));
+        return restauranteDtoAssembler.toDtoList(restauranteRepository.buscaCustomizada(nome, taxaFreteInicial, taxaFreteFinal));
     }
 
     @GetMapping("/com-frete-gratis")
     public List<RestauranteDto> restaurantesComFreteGratis(@RequestParam(required = false) String nome) {
-        return toDtoList(restauranteRepository.findComFreteGratis(nome));
+        return restauranteDtoAssembler.toDtoList(restauranteRepository.findComFreteGratis(nome));
     }
 
     @GetMapping("/primeiro")
     public Optional<RestauranteDto> buscarPrimeiro() {
-        return Optional.of(toDto(restauranteRepository.buscarPrimeiro()
+        return Optional.of(restauranteDtoAssembler.toDto(restauranteRepository.buscarPrimeiro()
                 .orElseThrow(() -> new RestauranteNaoEncontradoException("Não existe um restaurante cadastrado"))
         ));
     }
@@ -104,9 +107,9 @@ public class RestauranteController {
     @ResponseStatus(HttpStatus.CREATED)
     public RestauranteDto adicionar(@RequestBody @Valid RestauranteInputDto restauranteInput) {
         try {
-            Restaurante restaurante = toDomainObject(restauranteInput);
+            Restaurante restaurante = restauranteDomainObjectAssembler.toDomainObject(restauranteInput);
 
-            return toDto(cadastroRestauranteService.salvar(restaurante));
+            return restauranteDtoAssembler.toDto(cadastroRestauranteService.salvar(restaurante));
         } catch (EntidadeNaoEncontradaException e) {
             throw new NegocioException(e.getMessage());
         }
@@ -116,13 +119,13 @@ public class RestauranteController {
     public RestauranteDto atualizar(@PathVariable Long id,
                                     @RequestBody @Valid RestauranteInputDto restauranteInput) {
         try {
-        Restaurante restaurante = toDomainObject(restauranteInput);
+        Restaurante restaurante = restauranteDomainObjectAssembler.toDomainObject(restauranteInput);
         Restaurante restauranteAtual = cadastroRestauranteService.verificarSeExiste(id);
 
         BeanUtils.copyProperties(restaurante, restauranteAtual,
                 "id", "formasPagamento", "endereco", "dataCadastro", "produtos");
 
-            return toDto(cadastroRestauranteService.salvar(restauranteAtual));
+            return restauranteDtoAssembler.toDto(cadastroRestauranteService.salvar(restauranteAtual));
         } catch (EntidadeNaoEncontradaException e) {
             throw new NegocioException(e.getMessage());
         }
@@ -136,7 +139,7 @@ public class RestauranteController {
 
         merge(campos, restaurante, request);
 
-        return atualizar(id, toInputDto(restaurante));
+        return atualizar(id, restauranteDtoAssembler.toInputDto(restaurante));
     }
 
     private void merge(Map<String, Object> dadosOrigem,
@@ -163,52 +166,6 @@ public class RestauranteController {
             Throwable rootCause = ExceptionUtils.getRootCause(e);
             throw new HttpMessageNotReadableException(e.getMessage(), rootCause, serverHttpRequest);
         }
-    }
-
-    private RestauranteDto toDto(Restaurante restaurante) {
-        CozinhaDto cozinhaDto = new CozinhaDto();
-        cozinhaDto.setId(restaurante.getCozinha().getId());
-        cozinhaDto.setNome(restaurante.getCozinha().getNome());
-
-        RestauranteDto restauranteDto = new RestauranteDto();
-        restauranteDto.setId(restaurante.getId());
-        restauranteDto.setNome(restaurante.getNome());
-        restauranteDto.setTaxaFrete(restaurante.getTaxaFrete());
-        restauranteDto.setCozinha(cozinhaDto);
-
-        return restauranteDto;
-    }
-
-    private List<RestauranteDto> toDtoList(List<Restaurante> restaurantes) {
-        return restaurantes.stream()
-                .map(this::toDto)
-                .toList();
-    }
-
-    private Restaurante toDomainObject(RestauranteInputDto restauranteInput) {
-        Restaurante restaurante = new Restaurante();
-        restaurante.setNome(restauranteInput.getNome());
-        restaurante.setTaxaFrete(restauranteInput.getTaxaFrete());
-
-        Cozinha cozinha = new Cozinha();
-        cozinha.setId(restauranteInput.getCozinha().getId());
-
-        restaurante.setCozinha(cozinha);
-
-        return restaurante;
-    }
-
-    private RestauranteInputDto toInputDto(Restaurante restaurante) {
-        RestauranteInputDto restauranteInputDto = new RestauranteInputDto();
-        restauranteInputDto.setNome(restaurante.getNome());
-        restauranteInputDto.setTaxaFrete(restaurante.getTaxaFrete());
-
-        CozinhaIdInputDto cozinhaIdInputDto = new CozinhaIdInputDto();
-        cozinhaIdInputDto.setId(restaurante.getCozinha().getId());
-
-        restauranteInputDto.setCozinha(cozinhaIdInputDto);
-
-        return restauranteInputDto;
     }
 
 }
