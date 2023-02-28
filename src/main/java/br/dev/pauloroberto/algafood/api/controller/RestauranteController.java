@@ -60,7 +60,8 @@ public class RestauranteController {
     }
 
     @GetMapping("/por-nome")
-    public List<RestauranteDto> buscarPorNome(@RequestParam String nome, Long cozinhaId) {
+    public List<RestauranteDto> buscarPorNome(@RequestParam String nome,
+                                              Long cozinhaId) {
         return restauranteDtoAssembler.toDtoList(restauranteRepository.consultarPorNome(nome, cozinhaId));
     }
 

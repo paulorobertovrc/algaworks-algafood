@@ -1,9 +1,12 @@
 package br.dev.pauloroberto.algafood.api.controller;
 
+import br.dev.pauloroberto.algafood.api.assembler.CozinhaDomainObjectAssembler;
+import br.dev.pauloroberto.algafood.api.assembler.CozinhaDtoAssembler;
+import br.dev.pauloroberto.algafood.api.model.CozinhaDto;
+import br.dev.pauloroberto.algafood.api.model.input.CozinhaInputDto;
 import br.dev.pauloroberto.algafood.domain.model.Cozinha;
 import br.dev.pauloroberto.algafood.domain.repository.CozinhaRepository;
 import br.dev.pauloroberto.algafood.domain.service.CadastroCozinhaService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,30 +23,37 @@ public class CozinhaController {
     private CozinhaRepository cozinhaRepository;
     @Autowired
     private CadastroCozinhaService cadastroCozinhaService;
+    @Autowired
+    private CozinhaDtoAssembler cozinhaDtoAssembler;
+    @Autowired
+    private CozinhaDomainObjectAssembler cozinhaDomainObjectAssembler;
 
     @GetMapping
-    public List<Cozinha> listar() {
-        return cozinhaRepository.findAll();
+    public List<CozinhaDto> listar() {
+        return cozinhaDtoAssembler.toDtoList(cozinhaRepository.findAll());
     }
 
     @GetMapping("/{id}")
-    public Cozinha buscar(@PathVariable Long id) {
-        return cadastroCozinhaService.verificarSeExiste(id);
+    public CozinhaDto buscar(@PathVariable Long id) {
+        Cozinha cozinha = cadastroCozinhaService.verificarSeExiste(id);
+
+        return cozinhaDtoAssembler.toDto(cozinha);
     }
 
     @GetMapping("/por-nome")
-    public ResponseEntity<List<Cozinha>> buscarTodasPorNome(@RequestParam String nome) {
-        List<Cozinha> cozinhas = cozinhaRepository.findTodasByNomeContaining(nome);
+    public ResponseEntity<List<CozinhaDto>> buscarTodasPorNome(@RequestParam String nome) {
+        List<CozinhaDto> cozinhas = cozinhaDtoAssembler.toDtoList(cozinhaRepository.findTodasByNomeContaining(nome));
 
         return cozinhas.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(cozinhas);
     }
 
     @GetMapping("/por-nome-exato")
-    public ResponseEntity<Cozinha> buscarPorNomeExato(@RequestParam String nome) {
+    public ResponseEntity<CozinhaDto> buscarPorNomeExato(@RequestParam String nome) {
         Optional<Cozinha> cozinha = cozinhaRepository.findByNome(nome);
 
-        return cozinha.map(ResponseEntity::ok)
+        return cozinha.map(cozinhaEncontrada -> ResponseEntity.ok(cozinhaDtoAssembler.toDto(cozinhaEncontrada)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
+
     }
 
     @GetMapping("/existe-por-nome")
@@ -53,17 +63,20 @@ public class CozinhaController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Cozinha adicionar(@RequestBody @Valid Cozinha cozinha) {
-        return cadastroCozinhaService.salvar(cozinha);
+    public CozinhaDto adicionar(@RequestBody @Valid CozinhaInputDto cozinhaInput) {
+        Cozinha cozinha = cozinhaDomainObjectAssembler.toDomainObject(cozinhaInput);
+
+        return cozinhaDtoAssembler.toDto(cadastroCozinhaService.salvar(cozinha));
     }
 
     @PutMapping("/{id}")
-    public Cozinha atualizar(@PathVariable Long id, @RequestBody @Valid Cozinha cozinhaAtualizada) {
+    public CozinhaDto atualizar(@PathVariable Long id,
+                             @RequestBody @Valid CozinhaInputDto cozinhaInput) {
         Cozinha cozinha = cadastroCozinhaService.verificarSeExiste(id);
 
-        BeanUtils.copyProperties(cozinhaAtualizada, cozinha, "id");
+        cozinhaDomainObjectAssembler.copyToDomainObject(cozinhaInput, cozinha);
 
-        return cadastroCozinhaService.salvar(cozinha);
+        return cozinhaDtoAssembler.toDto(cadastroCozinhaService.salvar(cozinha));
     }
 
     @DeleteMapping("/{id}")

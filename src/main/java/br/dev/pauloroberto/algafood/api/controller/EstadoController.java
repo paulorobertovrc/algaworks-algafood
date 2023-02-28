@@ -1,5 +1,9 @@
 package br.dev.pauloroberto.algafood.api.controller;
 
+import br.dev.pauloroberto.algafood.api.assembler.EstadoDomainObjectAssembler;
+import br.dev.pauloroberto.algafood.api.assembler.EstadoDtoAssembler;
+import br.dev.pauloroberto.algafood.api.model.EstadoDto;
+import br.dev.pauloroberto.algafood.api.model.input.EstadoInputDto;
 import br.dev.pauloroberto.algafood.domain.exception.EstadoNaoEncontradoException;
 import br.dev.pauloroberto.algafood.domain.exception.NegocioException;
 import br.dev.pauloroberto.algafood.domain.model.Estado;
@@ -19,17 +23,30 @@ public class EstadoController {
     private EstadoRepository estadoRepository;
     @Autowired
     private CadastroEstadoService cadastroEstadoService;
+    @Autowired
+    private EstadoDtoAssembler estadoDtoAssembler;
+    @Autowired
+    private EstadoDomainObjectAssembler estadoDomainObjectAssembler;
 
     @GetMapping
-    public List<Estado> listar() {
-        return estadoRepository.findAll();
+    public List<EstadoDto> listar() {
+        return estadoDtoAssembler.toDtoList(estadoRepository.findAll());
+    }
+
+    @GetMapping("/{id}")
+    public EstadoDto buscar(@PathVariable Long id) {
+        Estado estado = cadastroEstadoService.verificarSeExiste(id);
+
+        return estadoDtoAssembler.toDto(estado);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Estado adicionar(@RequestBody @Valid Estado estado) {
+    public EstadoDto adicionar(@RequestBody @Valid EstadoInputDto estadoInput) {
         try {
-            return cadastroEstadoService.salvar(estado);
+            Estado estado = estadoDomainObjectAssembler.toDomainObject(estadoInput);
+
+            return estadoDtoAssembler.toDto(cadastroEstadoService.salvar(estado));
         } catch (EstadoNaoEncontradoException e) {
             throw new NegocioException(e.getMessage(), e);
         }
