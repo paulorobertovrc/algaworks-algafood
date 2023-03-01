@@ -11,7 +11,6 @@ import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,20 +65,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(e, problem, new HttpHeaders(), status, request);
     }
 
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<?> handleDataIntegrityViolation(DataIntegrityViolationException e,
-                                                                   WebRequest request) {
-        HttpStatus status = HttpStatus.BAD_REQUEST;
-        Problem problem = createProblemBuilder(status,
-                "Violação de integridade de dados." +
-                        " Verifique se o recurso não está sendo utilizado, se o valor informado é válido ou não está duplicado e tente novamente.",
-                ProblemType.ERRO_NEGOCIO)
-                .userMessage(MSG_ERRO_DE_SISTEMA)
-                .build();
-
-        return handleExceptionInternal(e, problem, new HttpHeaders(), status, request);
-    }
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleUncaught(Exception e, WebRequest request) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -88,7 +73,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 ProblemType.ERRO_DE_SISTEMA)
                 .build();
 
-        e.printStackTrace(); // TODO: remover em produção
+        e.printStackTrace(); // TODO: excluir em produção
 
         return handleExceptionInternal(e, problem, new HttpHeaders(), status, request);
     }
