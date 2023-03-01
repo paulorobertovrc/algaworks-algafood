@@ -1,11 +1,14 @@
 package br.dev.pauloroberto.algafood.domain.service;
 
+import br.dev.pauloroberto.algafood.domain.exception.EntidadeEmUsoException;
 import br.dev.pauloroberto.algafood.domain.exception.EstadoNaoEncontradoException;
 import br.dev.pauloroberto.algafood.domain.exception.NegocioException;
 import br.dev.pauloroberto.algafood.domain.model.Estado;
 import br.dev.pauloroberto.algafood.domain.model.EstadosEnum;
 import br.dev.pauloroberto.algafood.domain.repository.EstadoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,13 +30,18 @@ public class CadastroEstadoService {
             } else {
                 estado.setEstado(EstadosEnum.valueOf(estado.getNome()));
             }
-        } catch (NullPointerException e) {
-            throw new NegocioException(String.format("Estado %s não encontrado. Somente podem ser cadastrados estados válidos."
-                            + " Por favor, verifique o nome e tente novamente.",
-                    estado.getNome()), e);
-        }
 
-        return estadoRepository.save(estado);
+            return estadoRepository.save(estado);
+
+        } catch (NullPointerException e) {
+            throw new NegocioException(
+                    String.format("Estado %s não encontrado. Somente podem ser cadastrados estados válidos."
+                            + " Por favor, verifique o nome e tente novamente.", estado.getNome()), e);
+        } catch (DataIntegrityViolationException e) {
+            throw new NegocioException(
+                    String.format("Estado %s já cadastrado. Por favor, verifique o nome e tente novamente.",
+                            estado.getNome()), e);
+        }
     }
 
     public Estado verificarSeExiste(Long estadoId) {
@@ -44,6 +52,15 @@ public class CadastroEstadoService {
 
     @Transactional
     public void excluir(Long id) {
-        estadoRepository.deleteById(id);
+        try {
+            estadoRepository.deleteById(id);
+            estadoRepository.flush(); // Força a execução da exclusão no banco de dados
+        } catch (DataIntegrityViolationException e) {
+            throw new EntidadeEmUsoException(
+                    String.format("O Estado de código %d não pode ser removido porque está em uso", id)
+            );
+        } catch (EmptyResultDataAccessException e) {
+            throw new EstadoNaoEncontradoException(id);
+        }
     }
 }

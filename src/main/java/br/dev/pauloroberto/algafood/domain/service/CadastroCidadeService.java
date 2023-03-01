@@ -1,10 +1,13 @@
 package br.dev.pauloroberto.algafood.domain.service;
 
 import br.dev.pauloroberto.algafood.domain.exception.CidadeNaoEncontradaException;
+import br.dev.pauloroberto.algafood.domain.exception.EntidadeEmUsoException;
 import br.dev.pauloroberto.algafood.domain.model.Cidade;
 import br.dev.pauloroberto.algafood.domain.model.Estado;
 import br.dev.pauloroberto.algafood.domain.repository.CidadeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,8 +36,17 @@ public class CadastroCidadeService {
     }
 
     @Transactional
-    public void remover(Long id) {
-        cidadeRepository.deleteById(id);
+    public void excluir(Long id) {
+        try {
+            cidadeRepository.deleteById(id);
+            cidadeRepository.flush(); // Força a execução da exclusão no banco de dados
+        } catch (DataIntegrityViolationException e) {
+            throw new EntidadeEmUsoException(
+                    String.format("A Cidade de código %d não pode ser removida porque está em uso", id)
+            );
+        } catch (EmptyResultDataAccessException e) {
+            throw new CidadeNaoEncontradaException(id);
+        }
     }
 
     public Cidade verificarSeExiste(Long cidadeId) {
