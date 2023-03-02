@@ -4,7 +4,7 @@ import br.dev.pauloroberto.algafood.api.assembler.FormaPagamentoDomainObjectAsse
 import br.dev.pauloroberto.algafood.api.assembler.FormaPagamentoDtoAssembler;
 import br.dev.pauloroberto.algafood.api.model.FormaPagamentoDto;
 import br.dev.pauloroberto.algafood.api.model.input.FormaPagamentoInputDto;
-import br.dev.pauloroberto.algafood.domain.exception.EntidadeNaoEncontradaException;
+import br.dev.pauloroberto.algafood.domain.exception.FormaPagamentoNaoEncontradaException;
 import br.dev.pauloroberto.algafood.domain.exception.NegocioException;
 import br.dev.pauloroberto.algafood.domain.model.FormaPagamento;
 import br.dev.pauloroberto.algafood.domain.service.CadastroFormaPagamentoService;
@@ -41,7 +41,7 @@ public class FormaPagamentoController {
         try {
             FormaPagamento formaPagamento = formaPagamentoDomainObjectAssembler.toDomainObject(formaPagamentoInput);
             return formaPagamentoDtoAssembler.toDto(cadastroFormaPagamentoService.salvar(formaPagamento));
-        } catch (EntidadeNaoEncontradaException e) {
+        } catch (FormaPagamentoNaoEncontradaException e) {
             throw new NegocioException(e.getMessage());
         }
     }
@@ -53,7 +53,7 @@ public class FormaPagamentoController {
             FormaPagamento formaPagamento = cadastroFormaPagamentoService.verificarSeExiste(id);
             formaPagamentoDomainObjectAssembler.copyToDomainObject(formaPagamentoInput, formaPagamento);
             return formaPagamentoDtoAssembler.toDto(cadastroFormaPagamentoService.salvar(formaPagamento));
-        } catch (EntidadeNaoEncontradaException e) {
+        } catch (FormaPagamentoNaoEncontradaException e) {
             throw new NegocioException(e.getMessage());
         }
     }

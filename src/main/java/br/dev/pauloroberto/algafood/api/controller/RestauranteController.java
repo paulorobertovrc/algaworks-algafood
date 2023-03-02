@@ -4,9 +4,7 @@ import br.dev.pauloroberto.algafood.api.assembler.RestauranteDomainObjectAssembl
 import br.dev.pauloroberto.algafood.api.assembler.RestauranteDtoAssembler;
 import br.dev.pauloroberto.algafood.api.model.RestauranteDto;
 import br.dev.pauloroberto.algafood.api.model.input.RestauranteInputDto;
-import br.dev.pauloroberto.algafood.domain.exception.EntidadeNaoEncontradaException;
-import br.dev.pauloroberto.algafood.domain.exception.NegocioException;
-import br.dev.pauloroberto.algafood.domain.exception.RestauranteNaoEncontradoException;
+import br.dev.pauloroberto.algafood.domain.exception.*;
 import br.dev.pauloroberto.algafood.domain.model.Restaurante;
 import br.dev.pauloroberto.algafood.domain.repository.RestauranteRepository;
 import br.dev.pauloroberto.algafood.domain.service.CadastroRestauranteService;
@@ -110,7 +108,7 @@ public class RestauranteController {
             Restaurante restaurante = restauranteDomainObjectAssembler.toDomainObject(restauranteInput);
 
             return restauranteDtoAssembler.toDto(cadastroRestauranteService.salvar(restaurante));
-        } catch (EntidadeNaoEncontradaException e) {
+        } catch (CozinhaNaoEncontradaException | CidadeNaoEncontradaException e) {
             throw new NegocioException(e.getMessage());
         }
     }
@@ -124,7 +122,7 @@ public class RestauranteController {
             restauranteDomainObjectAssembler.copyToDomainObject(restauranteInput, restauranteAtual);
 
             return restauranteDtoAssembler.toDto(cadastroRestauranteService.salvar(restauranteAtual));
-        } catch (EntidadeNaoEncontradaException e) {
+        } catch (CozinhaNaoEncontradaException | CidadeNaoEncontradaException e) {
             throw new NegocioException(e.getMessage());
         }
     }
