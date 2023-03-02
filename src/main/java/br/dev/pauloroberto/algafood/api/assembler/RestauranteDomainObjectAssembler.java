@@ -1,6 +1,7 @@
 package br.dev.pauloroberto.algafood.api.assembler;
 
 import br.dev.pauloroberto.algafood.api.model.input.RestauranteInputDto;
+import br.dev.pauloroberto.algafood.domain.model.Cidade;
 import br.dev.pauloroberto.algafood.domain.model.Cozinha;
 import br.dev.pauloroberto.algafood.domain.model.Restaurante;
 import org.modelmapper.ModelMapper;
@@ -21,6 +22,11 @@ public class RestauranteDomainObjectAssembler {
         // org.hibernate.HibernateException:
         // identifier of an instance of br.dev.pauloroberto.algafood.domain.model.Cozinha was altered from 1 to 2
         restaurante.setCozinha(new Cozinha());
+
+        // É instanciada uma cidade nova para evitar o mesmo erro acima
+        if (restaurante.getEndereco() != null) {
+            restaurante.getEndereco().setCidade(new Cidade());
+        }
 
         modelMapper.map(restauranteInput, restaurante);
     }
