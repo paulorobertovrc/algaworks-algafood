@@ -38,7 +38,7 @@ public class Restaurante {
     @ManyToOne
     @JoinColumn(name = "cozinha_id", nullable = false)
     @NotNull
-    @Valid // @Valid para validar as propriedades do cozinha e não apenas o objeto cozinha
+    @Valid // @Valid para validar as propriedades da cozinha e não apenas o objeto cozinha
     @ConvertGroup(to = Groups.CozinhaId.class) // @ConvertGroup para converter o grupo de validação padrão para o grupo de validação de cadastro de restaurante
     private Cozinha cozinha;
 
@@ -70,6 +70,14 @@ public class Restaurante {
 
     public void inativar() {
         setAtivo(false);
+    }
+
+    public void adicionarFormaPagamento(FormaPagamento formaPagamento) {
+        formasPagamento.add(formaPagamento);
+    }
+
+    public void removerFormaPagamento(FormaPagamento formaPagamento) {
+        formasPagamento.remove(formaPagamento);
     }
 
 }
