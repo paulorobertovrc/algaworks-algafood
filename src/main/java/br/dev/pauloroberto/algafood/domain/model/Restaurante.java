@@ -46,6 +46,7 @@ public class Restaurante {
     private Endereco endereco;
 
     private Boolean ativo = true;
+    private Boolean aberto = false;
 
     @Column(nullable = false, columnDefinition = "datetime")
     @CreationTimestamp
@@ -78,6 +79,14 @@ public class Restaurante {
 
     public void removerFormaPagamento(FormaPagamento formaPagamento) {
         formasPagamento.remove(formaPagamento);
+    }
+
+    public void abrir() {
+        setAberto(true);
+    }
+
+    public void fechar() {
+        setAberto(false);
     }
 
 }

@@ -133,6 +133,18 @@ public class RestauranteController {
         cadastroRestauranteService.ativar(id);
     }
 
+    @PutMapping("/{id}/abertura")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void abrir(@PathVariable Long id) {
+        cadastroRestauranteService.abrir(id);
+    }
+
+    @PutMapping("/{id}/fechamento")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void fechar(@PathVariable Long id) {
+        cadastroRestauranteService.fechar(id);
+    }
+
     @DeleteMapping("/{id}/ativo")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void inativar(@PathVariable Long id) {
