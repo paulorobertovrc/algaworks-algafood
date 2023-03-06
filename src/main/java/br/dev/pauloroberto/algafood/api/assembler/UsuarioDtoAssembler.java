@@ -7,6 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.List;
 
 @Component
@@ -18,7 +19,7 @@ public class UsuarioDtoAssembler {
         return modelMapper.map(usuario, UsuarioDto.class);
     }
 
-    public List<UsuarioDto> toDtoList(List<Usuario> usuarios) {
+    public List<UsuarioDto> toDtoList(Collection<Usuario> usuarios) {
         return usuarios.stream()
                 .map(this::toDto)
                 .toList();

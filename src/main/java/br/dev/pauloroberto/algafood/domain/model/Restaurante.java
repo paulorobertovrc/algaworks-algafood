@@ -15,7 +15,9 @@ import javax.validation.groups.ConvertGroup;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -65,6 +67,12 @@ public class Restaurante {
     @OneToMany(mappedBy = "restaurante")
     private List<Produto> produtos = new ArrayList<>();
 
+    @ManyToMany
+    @JoinTable(name = "restaurante_usuario_responsavel",
+            joinColumns = @JoinColumn(name = "restaurante_id"),
+            inverseJoinColumns = @JoinColumn(name = "usuario_id"))
+    private Set<Usuario> responsaveis = new HashSet<>();
+
     public void ativar() {
         setAtivo(true);
     }
@@ -73,20 +81,28 @@ public class Restaurante {
         setAtivo(false);
     }
 
-    public void adicionarFormaPagamento(FormaPagamento formaPagamento) {
-        formasPagamento.add(formaPagamento);
-    }
-
-    public void removerFormaPagamento(FormaPagamento formaPagamento) {
-        formasPagamento.remove(formaPagamento);
-    }
-
     public void abrir() {
         setAberto(true);
     }
 
     public void fechar() {
         setAberto(false);
+    }
+
+    public void associarFormaPagamento(FormaPagamento formaPagamento) {
+        formasPagamento.add(formaPagamento);
+    }
+
+    public void desassociarFormaPagamento(FormaPagamento formaPagamento) {
+        formasPagamento.remove(formaPagamento);
+    }
+
+    public void associarResponsavel(Usuario usuario) {
+        responsaveis.add(usuario);
+    }
+
+    public void desassociarResponsavel(Usuario usuario) {
+        responsaveis.remove(usuario);
     }
 
 }

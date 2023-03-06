@@ -2,10 +2,7 @@ package br.dev.pauloroberto.algafood.domain.service;
 
 import br.dev.pauloroberto.algafood.domain.exception.NegocioException;
 import br.dev.pauloroberto.algafood.domain.exception.RestauranteNaoEncontradoException;
-import br.dev.pauloroberto.algafood.domain.model.Cidade;
-import br.dev.pauloroberto.algafood.domain.model.Cozinha;
-import br.dev.pauloroberto.algafood.domain.model.FormaPagamento;
-import br.dev.pauloroberto.algafood.domain.model.Restaurante;
+import br.dev.pauloroberto.algafood.domain.model.*;
 import br.dev.pauloroberto.algafood.domain.repository.RestauranteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +18,8 @@ public class CadastroRestauranteService {
     private CadastroCidadeService cadastroCidadeService;
     @Autowired
     private CadastroFormaPagamentoService cadastroFormaPagamentoService;
+    @Autowired
+    private CadastroUsuarioService cadastroUsuarioService;
 
     @Transactional
     public Restaurante salvar(Restaurante restaurante) {
@@ -55,6 +54,18 @@ public class CadastroRestauranteService {
     }
 
     @Transactional
+    public void abrir(Long id) {
+        Restaurante restaurante = verificarSeExiste(id);
+        restaurante.abrir();
+    }
+
+    @Transactional
+    public void fechar(Long id) {
+        Restaurante restaurante = verificarSeExiste(id);
+        restaurante.fechar();
+    }
+
+    @Transactional
     public void associarFormaPagamento(Long restauranteId, Long formaPagamentoId) {
         Restaurante restaurante = verificarSeExiste(restauranteId);
         FormaPagamento formaPagamento = cadastroFormaPagamentoService.verificarSeExiste(formaPagamentoId);
@@ -68,7 +79,7 @@ public class CadastroRestauranteService {
         // Isso faria com que o Controller retornasse a resposta sem alteração nas formas de pagamento associadas, em vez
         // de lançar a exceção.
 
-        restaurante.adicionarFormaPagamento(formaPagamento);
+        restaurante.associarFormaPagamento(formaPagamento);
     }
 
     @Transactional
@@ -76,19 +87,23 @@ public class CadastroRestauranteService {
         Restaurante restaurante = verificarSeExiste(restauranteId);
         FormaPagamento formaPagamento = cadastroFormaPagamentoService.verificarSeExiste(formaPagamentoId);
 
-        restaurante.removerFormaPagamento(formaPagamento);
+        restaurante.desassociarFormaPagamento(formaPagamento);
     }
 
     @Transactional
-    public void abrir(Long id) {
-        Restaurante restaurante = verificarSeExiste(id);
-        restaurante.abrir();
+    public void associarResponsavel(Long restauranteId, Long usuarioId) {
+        Restaurante restaurante = verificarSeExiste(restauranteId);
+        Usuario usuario = cadastroUsuarioService.verificarSeExiste(usuarioId);
+
+        restaurante.associarResponsavel(usuario);
     }
 
     @Transactional
-    public void fechar(Long id) {
-        Restaurante restaurante = verificarSeExiste(id);
-        restaurante.fechar();
+    public void desassociarResponsavel(Long restauranteId, Long usuarioId) {
+        Restaurante restaurante = verificarSeExiste(restauranteId);
+        Usuario usuario = cadastroUsuarioService.verificarSeExiste(usuarioId);
+
+        restaurante.desassociarResponsavel(usuario);
     }
 
 }
