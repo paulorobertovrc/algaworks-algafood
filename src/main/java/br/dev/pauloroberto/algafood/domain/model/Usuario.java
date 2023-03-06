@@ -44,4 +44,16 @@ public class Usuario {
         return !senhaCoincideCom(senha);
     }
 
+    public boolean jaEstaAssociadoAoGrupo(Grupo grupo) {
+        return this.getGrupos().contains(grupo);
+    }
+
+    public void associarGrupo(Grupo grupo) {
+        this.getGrupos().add(grupo);
+    }
+
+    public void desassociarGrupo(Grupo grupo) {
+        this.getGrupos().remove(grupo);
+    }
+
 }

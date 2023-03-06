@@ -3,6 +3,7 @@ package br.dev.pauloroberto.algafood.domain.service;
 import br.dev.pauloroberto.algafood.domain.exception.NegocioException;
 import br.dev.pauloroberto.algafood.domain.exception.SenhaUsuarioNaoCoincideException;
 import br.dev.pauloroberto.algafood.domain.exception.UsuarioNaoEncontradoException;
+import br.dev.pauloroberto.algafood.domain.model.Grupo;
 import br.dev.pauloroberto.algafood.domain.model.Usuario;
 import br.dev.pauloroberto.algafood.domain.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ import java.util.Optional;
 public class CadastroUsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
+    @Autowired
+    private CadastroGrupoService cadastroGrupoService;
 
     public List<Usuario> listar() {
         return usuarioRepository.findAll();
@@ -59,6 +62,32 @@ public class CadastroUsuarioService {
         }
 
         usuario.setSenha(novaSenha);
+    }
+
+    @Transactional
+    public void associarGrupo(Long usuarioId, Long grupoId) {
+        Usuario usuario = verificarSeExiste(usuarioId);
+        Grupo grupo = cadastroGrupoService.verificarSeExiste(grupoId);
+
+        if (usuario.jaEstaAssociadoAoGrupo(grupo)) {
+            throw new NegocioException(
+                    String.format("Usuário de código %d já está associado ao grupo de código %d", usuarioId, grupoId));
+        }
+
+        usuario.associarGrupo(grupo);
+    }
+
+    @Transactional
+    public void desassociarGrupo(Long usuarioId, Long grupoId) {
+        Usuario usuario = verificarSeExiste(usuarioId);
+        Grupo grupo = cadastroGrupoService.verificarSeExiste(grupoId);
+
+        if (!usuario.jaEstaAssociadoAoGrupo(grupo)) {
+            throw new NegocioException(
+                    String.format("Usuário de código %d não está associado ao grupo de código %d", usuarioId, grupoId));
+        }
+
+        usuario.desassociarGrupo(grupo);
     }
 
 }
