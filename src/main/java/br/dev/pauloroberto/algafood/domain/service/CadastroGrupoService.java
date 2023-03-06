@@ -3,6 +3,7 @@ package br.dev.pauloroberto.algafood.domain.service;
 import br.dev.pauloroberto.algafood.domain.exception.EntidadeEmUsoException;
 import br.dev.pauloroberto.algafood.domain.exception.GrupoNaoEncontradoException;
 import br.dev.pauloroberto.algafood.domain.model.Grupo;
+import br.dev.pauloroberto.algafood.domain.model.Permissao;
 import br.dev.pauloroberto.algafood.domain.repository.GrupoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -16,6 +17,8 @@ import java.util.List;
 public class CadastroGrupoService {
     @Autowired
     private GrupoRepository grupoRepository;
+    @Autowired
+    private CadastroPermissaoService cadastroPermissaoService;
 
     public List<Grupo> listar() {
         return grupoRepository.findAll();
@@ -43,6 +46,22 @@ public class CadastroGrupoService {
                     String.format("Grupo de código %d não pode ser removido porque está em uso", id)
             );
         }
+    }
+
+    @Transactional
+    public void associarPermissao(Long grupoId, Long permissaoId) {
+        Grupo grupo = verificarSeExiste(grupoId);
+        Permissao permissao = cadastroPermissaoService.verificarSeExiste(permissaoId);
+
+        grupo.associarPermissao(permissao);
+    }
+
+    @Transactional
+    public void desassociarPermissao(Long grupoId, Long permissaoId) {
+        Grupo grupo = verificarSeExiste(grupoId);
+        Permissao permissao = cadastroPermissaoService.verificarSeExiste(permissaoId);
+
+        grupo.desassociarPermissao(permissao);
     }
 
 }
