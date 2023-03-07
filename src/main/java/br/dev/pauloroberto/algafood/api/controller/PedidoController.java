@@ -1,7 +1,9 @@
 package br.dev.pauloroberto.algafood.api.controller;
 
 import br.dev.pauloroberto.algafood.api.assembler.PedidoDtoAssembler;
+import br.dev.pauloroberto.algafood.api.assembler.PedidoResumoDtoAssembler;
 import br.dev.pauloroberto.algafood.api.model.PedidoDto;
+import br.dev.pauloroberto.algafood.api.model.PedidoResumoDto;
 import br.dev.pauloroberto.algafood.domain.model.Pedido;
 import br.dev.pauloroberto.algafood.domain.service.CadastroPedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +21,12 @@ public class PedidoController {
     private CadastroPedidoService cadastroPedidoService;
     @Autowired
     private PedidoDtoAssembler pedidoDtoAssembler;
+    @Autowired
+    private PedidoResumoDtoAssembler pedidoResumoDtoAssembler;
 
     @GetMapping
-    public List<PedidoDto> listar() {
-        return pedidoDtoAssembler.toDtoList(cadastroPedidoService.listar());
+    public List<PedidoResumoDto> listar() {
+        return pedidoResumoDtoAssembler.toDtoList(cadastroPedidoService.listar());
     }
 
     @GetMapping("/{id}")
