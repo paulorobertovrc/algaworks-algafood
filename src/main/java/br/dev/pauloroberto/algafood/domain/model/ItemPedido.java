@@ -28,4 +28,15 @@ public class ItemPedido {
     @ManyToOne
     @JoinColumn(nullable = false)
     private Produto produto;
+
+    public void calcularPrecoTotal() {
+        BigDecimal precoUnitario = this.getPrecoUnitario();
+
+        if (precoUnitario == null) precoUnitario = BigDecimal.ZERO;
+
+        BigDecimal quantidade = BigDecimal.valueOf(this.getQuantidade());
+
+        this.precoTotal = precoUnitario.multiply(quantidade);
+    }
+
 }
