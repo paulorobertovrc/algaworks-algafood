@@ -33,6 +33,7 @@ public class ItemPedido {
         BigDecimal precoUnitario = this.getPrecoUnitario();
 
         if (precoUnitario == null) precoUnitario = BigDecimal.ZERO;
+        if (quantidade == null) quantidade = 0;
 
         BigDecimal quantidade = BigDecimal.valueOf(this.getQuantidade());
 

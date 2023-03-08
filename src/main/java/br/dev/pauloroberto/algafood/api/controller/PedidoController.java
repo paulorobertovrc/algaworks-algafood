@@ -1,17 +1,19 @@
 package br.dev.pauloroberto.algafood.api.controller;
 
+import br.dev.pauloroberto.algafood.api.assembler.PedidoDomainObjectAssembler;
 import br.dev.pauloroberto.algafood.api.assembler.PedidoDtoAssembler;
 import br.dev.pauloroberto.algafood.api.assembler.PedidoResumoDtoAssembler;
 import br.dev.pauloroberto.algafood.api.model.PedidoDto;
 import br.dev.pauloroberto.algafood.api.model.PedidoResumoDto;
+import br.dev.pauloroberto.algafood.api.model.input.PedidoInputDto;
 import br.dev.pauloroberto.algafood.domain.model.Pedido;
+import br.dev.pauloroberto.algafood.domain.model.Usuario;
 import br.dev.pauloroberto.algafood.domain.service.CadastroPedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -23,6 +25,8 @@ public class PedidoController {
     private PedidoDtoAssembler pedidoDtoAssembler;
     @Autowired
     private PedidoResumoDtoAssembler pedidoResumoDtoAssembler;
+    @Autowired
+    private PedidoDomainObjectAssembler pedidoDomainObjectAssembler;
 
     @GetMapping
     public List<PedidoResumoDto> listar() {
@@ -32,6 +36,20 @@ public class PedidoController {
     @GetMapping("/{id}")
     public PedidoDto buscar(@PathVariable Long id) {
         Pedido pedido = cadastroPedidoService.verificarSeExiste(id);
+
+        return pedidoDtoAssembler.toDto(pedido);
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public PedidoDto adicionar(@RequestBody @Valid PedidoInputDto pedidoInput) {
+        Pedido pedido = pedidoDomainObjectAssembler.toDomainObject(pedidoInput);
+
+        // TODO: pegar usuário autenticado
+        pedido.setCliente(new Usuario());
+        pedido.getCliente().setId(1L);
+
+        cadastroPedidoService.emitir(pedido);
 
         return pedidoDtoAssembler.toDto(pedido);
     }

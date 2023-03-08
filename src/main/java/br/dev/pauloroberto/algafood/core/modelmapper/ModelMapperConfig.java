@@ -11,6 +11,7 @@ public class ModelMapperConfig {
     @Bean
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
+
         modelMapper.createTypeMap(ItemPedidoInputDto.class, ItemPedido.class)
                 .addMappings(mapper -> mapper.skip(ItemPedido::setId));
 
