@@ -8,7 +8,7 @@ import br.dev.pauloroberto.algafood.api.model.PedidoResumoDto;
 import br.dev.pauloroberto.algafood.api.model.input.PedidoInputDto;
 import br.dev.pauloroberto.algafood.domain.model.Pedido;
 import br.dev.pauloroberto.algafood.domain.model.Usuario;
-import br.dev.pauloroberto.algafood.domain.service.CadastroPedidoService;
+import br.dev.pauloroberto.algafood.domain.service.EmissaoPedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +20,7 @@ import java.util.List;
 @RequestMapping("/pedidos")
 public class PedidoController {
     @Autowired
-    private CadastroPedidoService cadastroPedidoService;
+    private EmissaoPedidoService emissaoPedidoService;
     @Autowired
     private PedidoDtoAssembler pedidoDtoAssembler;
     @Autowired
@@ -30,12 +30,12 @@ public class PedidoController {
 
     @GetMapping
     public List<PedidoResumoDto> listar() {
-        return pedidoResumoDtoAssembler.toDtoList(cadastroPedidoService.listar());
+        return pedidoResumoDtoAssembler.toDtoList(emissaoPedidoService.listar());
     }
 
-    @GetMapping("/{id}")
-    public PedidoDto buscar(@PathVariable Long id) {
-        Pedido pedido = cadastroPedidoService.verificarSeExiste(id);
+    @GetMapping("/{codigoPedido}")
+    public PedidoDto buscar(@PathVariable String codigoPedido) {
+        Pedido pedido = emissaoPedidoService.verificarSeExiste(codigoPedido);
 
         return pedidoDtoAssembler.toDto(pedido);
     }
@@ -49,7 +49,7 @@ public class PedidoController {
         pedido.setCliente(new Usuario());
         pedido.getCliente().setId(1L);
 
-        cadastroPedidoService.emitir(pedido);
+        emissaoPedidoService.emitir(pedido);
 
         return pedidoDtoAssembler.toDto(pedido);
     }

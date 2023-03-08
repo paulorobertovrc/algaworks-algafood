@@ -8,23 +8,23 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AlteracaoStatusPedidoService {
     @Autowired
-    private CadastroPedidoService cadastroPedidoService;
+    private EmissaoPedidoService emissaoPedidoService;
 
     @Transactional
-    public void confirmar(Long pedidoId) {
-        Pedido pedido = cadastroPedidoService.verificarSeExiste(pedidoId);
+    public void confirmar(String codigoPedido) {
+        Pedido pedido = emissaoPedidoService.verificarSeExiste(codigoPedido);
         pedido.confirmar();
     }
 
     @Transactional
-    public void entregar(Long pedidoId) {
-        Pedido pedido = cadastroPedidoService.verificarSeExiste(pedidoId);
+    public void entregar(String codigoPedido) {
+        Pedido pedido = emissaoPedidoService.verificarSeExiste(codigoPedido);
         pedido.entregar();
     }
 
     @Transactional
-    public void cancelar(Long pedidoId) {
-        Pedido pedido = cadastroPedidoService.verificarSeExiste(pedidoId);
+    public void cancelar(String codigoPedido) {
+        Pedido pedido = emissaoPedidoService.verificarSeExiste(codigoPedido);
         pedido.cancelar();
     }
 

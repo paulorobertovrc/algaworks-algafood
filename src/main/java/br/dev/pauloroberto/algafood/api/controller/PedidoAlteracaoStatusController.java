@@ -6,27 +6,27 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/pedidos/{pedidoId}")
+@RequestMapping("/pedidos/{codigoPedido}")
 public class PedidoAlteracaoStatusController {
     @Autowired
     private AlteracaoStatusPedidoService alteracaoStatusPedidoService;
 
     @PutMapping("/confirmacao")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void confirmar(@PathVariable Long pedidoId) {
-        alteracaoStatusPedidoService.confirmar(pedidoId);
+    public void confirmar(@PathVariable String codigoPedido) {
+        alteracaoStatusPedidoService.confirmar(codigoPedido);
     }
 
     @PutMapping("/entrega")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void entregar(@PathVariable Long pedidoId) {
-        alteracaoStatusPedidoService.entregar(pedidoId);
+    public void entregar(@PathVariable String codigoPedido) {
+        alteracaoStatusPedidoService.entregar(codigoPedido);
     }
 
     @PutMapping("/cancelamento")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void cancelar(@PathVariable Long pedidoId) {
-        alteracaoStatusPedidoService.cancelar(pedidoId);
+    public void cancelar(@PathVariable String codigoPedido) {
+        alteracaoStatusPedidoService.cancelar(codigoPedido);
     }
 
 }

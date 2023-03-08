@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class CadastroPedidoService {
+public class EmissaoPedidoService {
     @Autowired
     private PedidoRepository pedidoRepository;
     @Autowired
@@ -25,9 +25,9 @@ public class CadastroPedidoService {
     @Autowired
     private CadastroCidadeService cadastroCidadeService;
 
-    public Pedido verificarSeExiste(Long id) {
-        return pedidoRepository.findById(id)
-                .orElseThrow(() -> new PedidoNaoEncontradoException(id));
+    public Pedido verificarSeExiste(String codigo) {
+        return pedidoRepository.findByCodigo(codigo)
+                .orElseThrow(() -> new PedidoNaoEncontradoException(codigo));
     }
 
     public List<Pedido> listar() {

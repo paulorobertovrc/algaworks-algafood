@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -20,6 +21,8 @@ public class Pedido {
     @EqualsAndHashCode.Include
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String codigo;
 
     private BigDecimal subtotal;
     private BigDecimal taxaFrete;
@@ -63,14 +66,6 @@ public class Pedido {
         this.valorTotal = this.subtotal.add(this.taxaFrete);
     }
 
-    public void definirFrete() {
-        setTaxaFrete(getRestaurante().getTaxaFrete());
-    }
-
-    public void atribuirPedidoAosItens() {
-        getItens().forEach(item -> item.setPedido(this));
-    }
-
     public void confirmar() {
         setStatus(StatusPedido.CONFIRMADO);
         setDataConfirmacao(OffsetDateTime.now());
@@ -88,11 +83,16 @@ public class Pedido {
 
     private void setStatus(StatusPedido novoStatus) {
         if (getStatus().naoPodeAlterarPara(novoStatus)) {
-            throw new NegocioException(String.format("Status do pedido %d não pode ser alterado de %s para %s",
-                    getId(), getStatus().getDescricao(), novoStatus.getDescricao()));
+            throw new NegocioException(String.format("Status do pedido %s não pode ser alterado de %s para %s",
+                    getCodigo(), getStatus().getDescricao(), novoStatus.getDescricao()));
         }
 
         this.status = novoStatus;
+    }
+
+    @PrePersist // Método de callback do JPA que será executado antes de persistir o objeto no banco de dados
+    private void gerarCodigo() {
+        setCodigo(UUID.randomUUID().toString());
     }
 
 }
