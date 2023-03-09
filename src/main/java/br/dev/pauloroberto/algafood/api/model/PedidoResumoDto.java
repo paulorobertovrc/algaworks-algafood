@@ -1,5 +1,6 @@
 package br.dev.pauloroberto.algafood.api.model;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,6 +9,7 @@ import java.time.OffsetDateTime;
 
 @Getter
 @Setter
+@JsonFilter("pedidoFilter")
 public class PedidoResumoDto {
     private String codigo;
     private BigDecimal subtotal;
