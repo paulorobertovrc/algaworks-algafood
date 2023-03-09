@@ -9,7 +9,7 @@ import java.time.OffsetDateTime;
 
 @Getter
 @Setter
-@JsonFilter("pedidoFilter")
+//@JsonFilter("pedidoFilter")
 public class PedidoResumoDto {
     private String codigo;
     private BigDecimal subtotal;

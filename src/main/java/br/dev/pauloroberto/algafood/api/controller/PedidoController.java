@@ -33,29 +33,29 @@ public class PedidoController {
     private PedidoDomainObjectAssembler pedidoDomainObjectAssembler;
 
 //    @GetMapping
-//    public List<PedidoResumoDto> listar() {
-//        return pedidoResumoDtoAssembler.toDtoList(emissaoPedidoService.listar());
+//    public MappingJacksonValue listar(@RequestParam(required = false) String campos) {
+//        List<Pedido> pedidos = emissaoPedidoService.listar();
+//        List<PedidoResumoDto> pedidosResumoDto = pedidoResumoDtoAssembler.toDtoList(pedidos);
+//
+//        MappingJacksonValue pedidosWrapper = new MappingJacksonValue(pedidosResumoDto);
+//        SimpleFilterProvider filterProvider = new SimpleFilterProvider();
+//
+//        if (StringUtils.isNotBlank(campos)) {
+//            filterProvider.addFilter("pedidoFilter",
+//                    SimpleBeanPropertyFilter.filterOutAllExcept(campos.split(",")));
+//        }
+//        else {
+//            filterProvider.addFilter("pedidoFilter", SimpleBeanPropertyFilter.serializeAll());
+//        }
+//
+//        pedidosWrapper.setFilters(filterProvider);
+//
+//        return pedidosWrapper;
 //    }
 
     @GetMapping
-    public MappingJacksonValue listar(@RequestParam(required = false) String campos) {
-        List<Pedido> pedidos = emissaoPedidoService.listar();
-        List<PedidoResumoDto> pedidosResumoDto = pedidoResumoDtoAssembler.toDtoList(pedidos);
-
-        MappingJacksonValue pedidosWrapper = new MappingJacksonValue(pedidosResumoDto);
-        SimpleFilterProvider filterProvider = new SimpleFilterProvider();
-
-        if (StringUtils.isNotBlank(campos)) {
-            filterProvider.addFilter("pedidoFilter",
-                    SimpleBeanPropertyFilter.filterOutAllExcept(campos.split(",")));
-        }
-        else {
-            filterProvider.addFilter("pedidoFilter", SimpleBeanPropertyFilter.serializeAll());
-        }
-
-        pedidosWrapper.setFilters(filterProvider);
-
-        return pedidosWrapper;
+    public List<PedidoResumoDto> listar() {
+        return pedidoResumoDtoAssembler.toDtoList(emissaoPedidoService.listar());
     }
 
     @GetMapping("/{codigoPedido}")
