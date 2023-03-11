@@ -8,13 +8,11 @@ import br.dev.pauloroberto.algafood.api.model.PedidoResumoDto;
 import br.dev.pauloroberto.algafood.api.model.input.PedidoInputDto;
 import br.dev.pauloroberto.algafood.domain.model.Pedido;
 import br.dev.pauloroberto.algafood.domain.model.Usuario;
+import br.dev.pauloroberto.algafood.domain.repository.filter.PedidoFilter;
 import br.dev.pauloroberto.algafood.domain.service.EmissaoPedidoService;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import org.apache.commons.lang3.StringUtils;
+import br.dev.pauloroberto.algafood.infrastructure.repository.spec.PedidoSpecs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -33,8 +31,8 @@ public class PedidoController {
     private PedidoDomainObjectAssembler pedidoDomainObjectAssembler;
 
 //    @GetMapping
-//    public MappingJacksonValue listar(@RequestParam(required = false) String campos) {
-//        List<Pedido> pedidos = emissaoPedidoService.listar();
+//    public MappingJacksonValue pesquisar(@RequestParam(required = false) String campos) {
+//        List<Pedido> pedidos = emissaoPedidoService.pesquisar();
 //        List<PedidoResumoDto> pedidosResumoDto = pedidoResumoDtoAssembler.toDtoList(pedidos);
 //
 //        MappingJacksonValue pedidosWrapper = new MappingJacksonValue(pedidosResumoDto);
@@ -54,8 +52,8 @@ public class PedidoController {
 //    }
 
     @GetMapping
-    public List<PedidoResumoDto> listar() {
-        return pedidoResumoDtoAssembler.toDtoList(emissaoPedidoService.listar());
+    public List<PedidoResumoDto> pesquisar(PedidoFilter filtro) {
+        return pedidoResumoDtoAssembler.toDtoList(emissaoPedidoService.listar(PedidoSpecs.usandoFiltro(filtro)));
     }
 
     @GetMapping("/{codigoPedido}")

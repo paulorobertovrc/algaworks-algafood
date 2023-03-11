@@ -26,10 +26,20 @@ public class CadastroProdutoService {
                 .orElseThrow(() -> new ProdutoNaoEncontradoException(produtoId, restauranteId));
     }
 
-    public List<Produto> listar(Long restauranteId) {
+    public List<Produto> listarTodos(Long restauranteId) {
         cadastroRestauranteService.verificarSeExiste(restauranteId);
 
         return produtoRepository.findAllByRestauranteId(restauranteId);
+    }
+
+    public List<Produto> listarAtivos(Long restauranteId) {
+        cadastroRestauranteService.verificarSeExiste(restauranteId);
+
+        return produtoRepository.findAllByRestauranteIdAndAtivoTrue(restauranteId);
+    }
+
+    public List<Produto> listar(Long restauranteId, boolean incluirInativos) {
+        return incluirInativos ? listarTodos(restauranteId) : listarAtivos(restauranteId);
     }
 
 }

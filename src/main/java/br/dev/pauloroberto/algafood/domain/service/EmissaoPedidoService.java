@@ -5,6 +5,7 @@ import br.dev.pauloroberto.algafood.domain.exception.PedidoNaoEncontradoExceptio
 import br.dev.pauloroberto.algafood.domain.model.*;
 import br.dev.pauloroberto.algafood.domain.repository.PedidoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,8 +31,8 @@ public class EmissaoPedidoService {
                 .orElseThrow(() -> new PedidoNaoEncontradoException(codigo));
     }
 
-    public List<Pedido> listar() {
-        return pedidoRepository.findAll();
+    public List<Pedido> listar(Specification<Pedido> pedidoSpecification) {
+        return pedidoRepository.findAll(pedidoSpecification);
     }
 
     @Transactional

@@ -42,7 +42,7 @@ public class RestauranteController {
     private RestauranteDomainObjectAssembler restauranteDomainObjectAssembler;
 
 //    @GetMapping
-//    public List<RestauranteDto> listar() {
+//    public List<RestauranteDto> pesquisar() {
 //        return restauranteDtoAssembler.toDtoList(restauranteRepository.findAll());
 //    }
 

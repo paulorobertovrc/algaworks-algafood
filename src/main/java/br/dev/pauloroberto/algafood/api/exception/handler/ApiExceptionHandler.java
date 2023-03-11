@@ -15,6 +15,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -76,6 +78,16 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         e.printStackTrace(); // TODO: excluir em produção
 
         return handleExceptionInternal(e, problem, new HttpHeaders(), status, request);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleBindException(BindException ex,
+                                                         HttpHeaders headers,
+                                                         HttpStatus status,
+                                                         WebRequest request) {
+
+
+        return handleValidationInternal(ex, headers, status, request, ex.getBindingResult());
     }
 
     @Override
@@ -157,7 +169,15 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   HttpHeaders headers,
                                                                   HttpStatus status,
                                                                   WebRequest request) {
-        List<Problem.Field> problemFields = e.getBindingResult().getFieldErrors().stream()
+        return handleValidationInternal(e, headers, status, request, e.getBindingResult());
+    }
+
+    private ResponseEntity<Object> handleValidationInternal(Exception e,
+                                                            HttpHeaders headers,
+                                                            HttpStatus status,
+                                                            WebRequest request,
+                                                            BindingResult bindingResult) {
+        List<Problem.Field> problemFields = bindingResult.getFieldErrors().stream()
                 .map(fieldError -> {
                     String message = messageSource.getMessage(fieldError, LocaleContextHolder.getLocale());
 
@@ -176,7 +196,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .build();
 
         return handleExceptionInternal(e, problem, headers, status, request);
-
     }
 
     private ResponseEntity<Object> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException e,

@@ -27,8 +27,9 @@ public class RestauranteProdutoController {
     private ProdutoDomainObjectAssembler produtoDomainObjectAssembler;
 
     @GetMapping
-    public List<ProdutoDto> listar(@PathVariable Long restauranteId) {
-        List<Produto> produtos = cadastroProdutoService.listar(restauranteId);
+    public List<ProdutoDto> listar(@PathVariable Long restauranteId,
+                                   @RequestParam(required = false) boolean incluirInativos) {
+        List<Produto> produtos = cadastroProdutoService.listar(restauranteId, incluirInativos);
 
         return produtoDtoAssembler.toDtoList(produtos);
     }
