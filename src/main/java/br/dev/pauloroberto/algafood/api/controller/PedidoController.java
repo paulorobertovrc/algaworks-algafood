@@ -6,6 +6,7 @@ import br.dev.pauloroberto.algafood.api.assembler.PedidoResumoDtoAssembler;
 import br.dev.pauloroberto.algafood.api.model.PedidoDto;
 import br.dev.pauloroberto.algafood.api.model.PedidoResumoDto;
 import br.dev.pauloroberto.algafood.api.model.input.PedidoInputDto;
+import br.dev.pauloroberto.algafood.core.data.PageableTranslator;
 import br.dev.pauloroberto.algafood.domain.model.Pedido;
 import br.dev.pauloroberto.algafood.domain.model.Usuario;
 import br.dev.pauloroberto.algafood.domain.repository.filter.PedidoFilter;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/pedidos")
@@ -56,6 +58,8 @@ public class PedidoController {
 
     @GetMapping
     public Page<PedidoResumoDto> pesquisar(PedidoFilter filtro, Pageable pageable) {
+        pageable = traduzirPageable(pageable);
+
         Page<Pedido> pedidosPage = emissaoPedidoService.listar(PedidoSpecs.usandoFiltro(filtro), pageable);
         List<PedidoResumoDto> pedidosResumoDto = pedidoResumoDtoAssembler.toDtoList(pedidosPage.getContent());
 
@@ -81,6 +85,17 @@ public class PedidoController {
         emissaoPedidoService.emitir(pedido);
 
         return pedidoDtoAssembler.toDto(pedido);
+    }
+
+    private Pageable traduzirPageable(Pageable apiPageable) {
+        Map<String, String> mapeamento = Map.of(
+                "codigo", "codigo",
+                "valorTotal", "valorTotal",
+                "restauranteNome", "restaurante.nome",
+                "clienteNome", "cliente.nome"
+        );
+
+        return PageableTranslator.translate(apiPageable, mapeamento);
     }
 
 }

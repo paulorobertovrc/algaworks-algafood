@@ -8,6 +8,7 @@ public class PedidoSpecs {
 
     public static Specification<Pedido> usandoFiltro(PedidoFilter filtro) {
         return (root, query, builder) -> {
+            // fazendo join para evitar o erro: could not resolve property: nome
             if (Pedido.class.equals(query.getResultType())) {
                 root.fetch("restaurante").fetch("cozinha");
                 root.fetch("cliente");
