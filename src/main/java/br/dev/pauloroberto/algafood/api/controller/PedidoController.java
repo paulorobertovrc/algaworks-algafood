@@ -9,7 +9,7 @@ import br.dev.pauloroberto.algafood.api.model.input.PedidoInputDto;
 import br.dev.pauloroberto.algafood.core.data.PageableTranslator;
 import br.dev.pauloroberto.algafood.domain.model.Pedido;
 import br.dev.pauloroberto.algafood.domain.model.Usuario;
-import br.dev.pauloroberto.algafood.domain.repository.filter.PedidoFilter;
+import br.dev.pauloroberto.algafood.domain.filter.PedidoFilter;
 import br.dev.pauloroberto.algafood.domain.service.EmissaoPedidoService;
 import br.dev.pauloroberto.algafood.infrastructure.repository.spec.PedidoSpecs;
 import org.springframework.beans.factory.annotation.Autowired;

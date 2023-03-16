@@ -1,7 +1,7 @@
 package br.dev.pauloroberto.algafood.infrastructure.repository.spec;
 
 import br.dev.pauloroberto.algafood.domain.model.Pedido;
-import br.dev.pauloroberto.algafood.domain.repository.filter.PedidoFilter;
+import br.dev.pauloroberto.algafood.domain.filter.PedidoFilter;
 import org.springframework.data.jpa.domain.Specification;
 
 public class PedidoSpecs {
