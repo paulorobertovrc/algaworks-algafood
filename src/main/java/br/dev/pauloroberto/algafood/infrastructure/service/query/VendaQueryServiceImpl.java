@@ -1,4 +1,4 @@
-package br.dev.pauloroberto.algafood.infrastructure.service;
+package br.dev.pauloroberto.algafood.infrastructure.service.query;
 
 import br.dev.pauloroberto.algafood.domain.filter.VendaDiariaFilter;
 import br.dev.pauloroberto.algafood.domain.model.Pedido;
