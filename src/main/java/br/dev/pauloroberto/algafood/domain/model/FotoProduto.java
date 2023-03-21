@@ -1,12 +1,9 @@
 package br.dev.pauloroberto.algafood.domain.model;
 
-import br.dev.pauloroberto.algafood.core.validation.Groups;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -23,4 +20,13 @@ public class FotoProduto {
     private String descricao;
     private String contentType;
     private Long tamanho;
+
+    public Long getRestauranteId() {
+        if (getProduto() != null) {
+            return getProduto().getRestaurante().getId();
+        }
+
+        return null;
+    }
+
 }
