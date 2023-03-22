@@ -9,13 +9,11 @@ import br.dev.pauloroberto.algafood.domain.service.CadastroProdutoService;
 import br.dev.pauloroberto.algafood.domain.service.CatalogoFotoProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/restaurantes/{restauranteId}/produtos/{produtoId}/foto")
@@ -27,10 +25,18 @@ public class RestauranteProdutoFotoController {
     @Autowired
     private FotoProdutoDtoAssembler fotoProdutoDtoAssembler;
 
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public FotoProdutoDto buscar(@PathVariable Long produtoId,
+                                 @PathVariable Long restauranteId) {
+        FotoProduto fotoProduto = catalogoFotoProdutoService.verificarSeExiste(produtoId, restauranteId);
+
+        return fotoProdutoDtoAssembler.toDto(fotoProduto);
+    }
+
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public FotoProdutoDto atualizarFoto(@PathVariable Long produtoId,
                                         @PathVariable Long restauranteId,
-                                        @Valid FotoProdutoInputDto fotoProdutoInputDto) {
+                                        @Valid FotoProdutoInputDto fotoProdutoInputDto) throws IOException {
         Produto produto = cadastroProdutoService.verificarSeExiste(produtoId, restauranteId);
         MultipartFile arquivo = fotoProdutoInputDto.getArquivo();
 
@@ -42,7 +48,7 @@ public class RestauranteProdutoFotoController {
         foto.setTamanho(arquivo.getSize());
 
         return fotoProdutoDtoAssembler.toDto(
-                catalogoFotoProdutoService.salvarFotoProduto(foto)
+                catalogoFotoProdutoService.salvarFotoProduto(foto, arquivo.getInputStream())
         );
     }
 
