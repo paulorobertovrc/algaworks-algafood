@@ -11,6 +11,7 @@ import br.dev.pauloroberto.algafood.domain.service.CatalogoFotoProdutoService;
 import br.dev.pauloroberto.algafood.domain.service.FotoStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
@@ -93,6 +94,13 @@ public class RestauranteProdutoFotoController {
         return fotoProdutoDtoAssembler.toDto(
                 catalogoFotoProdutoService.salvarFotoProduto(foto, arquivo.getInputStream())
         );
+    }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void remover(@PathVariable Long produtoId,
+                        @PathVariable Long restauranteId) {
+        catalogoFotoProdutoService.remover(produtoId, restauranteId);
     }
 
 }
