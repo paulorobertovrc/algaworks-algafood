@@ -1,8 +1,10 @@
 package br.dev.pauloroberto.algafood.infrastructure.service.storage;
 
+import br.dev.pauloroberto.algafood.core.storage.StorageProperties;
 import br.dev.pauloroberto.algafood.domain.service.FotoStorageService;
 import br.dev.pauloroberto.algafood.domain.service.FotoStorageService.FotoRecuperada.FotoRecuperadaBuilder;
-import org.springframework.beans.factory.annotation.Value;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 
@@ -10,10 +12,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-@Service
+//@Service
 public class LocalFotoStorageService implements FotoStorageService {
-    @Value("${algafood.storage.local.diretorio-fotos}")
-    private Path diretorioFotos;
+    @Autowired
+    private StorageProperties storageProperties;
+
     @Override
     public void armazenar(NovaFoto novaFoto) {
         Path arquivoPath = getArquivoPath(novaFoto.getNomeArquivo());
@@ -50,8 +53,8 @@ public class LocalFotoStorageService implements FotoStorageService {
         }
     }
 
-    private Path getArquivoPath(String nomeArquivo) {
-        return diretorioFotos.resolve(Path.of(nomeArquivo));
+    private @NotNull Path getArquivoPath(String nomeArquivo) {
+        return storageProperties.getLocal().getDiretorioFotos().resolve(Path.of(nomeArquivo));
     }
 
 }

@@ -36,6 +36,14 @@ public interface FotoStorageService {
     class FotoRecuperada {
         private InputStream inputStream;
         private String url;
+
+        public boolean temUrl() {
+            return this.url != null;
+        }
+
+        public boolean temInputStream() {
+            return this.inputStream != null;
+        }
     }
 
 }
