@@ -1,6 +1,6 @@
 package br.dev.pauloroberto.algafood.api.controller;
 
-import br.dev.pauloroberto.algafood.domain.service.AlteracaoStatusPedidoService;
+import br.dev.pauloroberto.algafood.domain.service.FluxoPedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/pedidos/{codigoPedido}")
 public class PedidoAlteracaoStatusController {
     @Autowired
-    private AlteracaoStatusPedidoService alteracaoStatusPedidoService;
+    private FluxoPedidoService alteracaoStatusPedidoService;
 
     @PutMapping("/confirmacao")
     @ResponseStatus(HttpStatus.NO_CONTENT)
