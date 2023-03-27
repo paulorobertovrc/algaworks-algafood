@@ -15,6 +15,12 @@ import java.nio.file.Path;
 public class StorageProperties {
     private Local local = new Local();
     private S3 s3 = new S3();
+    private StorageTipo tipo = StorageTipo.LOCAL;
+
+    @Getter
+    public enum StorageTipo {
+        LOCAL, S3
+    }
 
     @Getter
     @Setter
