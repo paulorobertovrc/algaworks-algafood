@@ -14,6 +14,14 @@ import javax.validation.constraints.NotNull;
 @Component
 @ConfigurationProperties("algafood.email")
 public class EmailProperties {
-     @NotNull
-     private String remetente;
+
+    @NotNull
+    private String remetente;
+
+    private Implementacao impl = Implementacao.FAKE;
+
+    public enum Implementacao {
+        FAKE, SMTP
+    }
+
 }
