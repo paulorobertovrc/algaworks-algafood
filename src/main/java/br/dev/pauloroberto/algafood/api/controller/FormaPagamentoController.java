@@ -9,11 +9,14 @@ import br.dev.pauloroberto.algafood.domain.exception.NegocioException;
 import br.dev.pauloroberto.algafood.domain.model.FormaPagamento;
 import br.dev.pauloroberto.algafood.domain.service.CadastroFormaPagamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/formas-pagamento")
@@ -26,13 +29,23 @@ public class FormaPagamentoController {
     private FormaPagamentoDomainObjectAssembler formaPagamentoDomainObjectAssembler;
 
     @GetMapping
-    public List<FormaPagamentoDto> listar() {
-        return formaPagamentoDtoAssembler.toDtoList(cadastroFormaPagamentoService.listar());
+    public ResponseEntity<List<FormaPagamentoDto>> listar() {
+        List<FormaPagamento> formasPagamento = cadastroFormaPagamentoService.listar();
+        List<FormaPagamentoDto> formasPagamentoDto = formaPagamentoDtoAssembler.toDtoList(formasPagamento);
+
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
+                .body(formasPagamentoDto);
     }
 
     @GetMapping("/{id}")
-    public FormaPagamentoDto buscar(@PathVariable Long id) {
-        return formaPagamentoDtoAssembler.toDto(cadastroFormaPagamentoService.verificarSeExiste(id));
+    public ResponseEntity<FormaPagamentoDto> buscar(@PathVariable Long id) {
+        FormaPagamento formaPagamento = cadastroFormaPagamentoService.verificarSeExiste(id);
+        FormaPagamentoDto formaPagamentoDto = formaPagamentoDtoAssembler.toDto(formaPagamento);
+
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
+                .body(formaPagamentoDto);
     }
 
     @PostMapping
