@@ -13,8 +13,11 @@ import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.filter.ShallowEtagHeaderFilter;
 
 import javax.validation.Valid;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -29,23 +32,59 @@ public class FormaPagamentoController {
     private FormaPagamentoDomainObjectAssembler formaPagamentoDomainObjectAssembler;
 
     @GetMapping
-    public ResponseEntity<List<FormaPagamentoDto>> listar() {
+    public ResponseEntity<List<FormaPagamentoDto>> listar(ServletWebRequest request) {
+        desabilitarShallowETag(request);
+
+        String eTag = definirETag();
+
+        if (eTagInalterada(request, eTag)) return null;
+
         List<FormaPagamento> formasPagamento = cadastroFormaPagamentoService.listar();
         List<FormaPagamentoDto> formasPagamentoDto = formaPagamentoDtoAssembler.toDtoList(formasPagamento);
 
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
+                .eTag(eTag)
                 .body(formasPagamentoDto);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FormaPagamentoDto> buscar(@PathVariable Long id) {
+    public ResponseEntity<FormaPagamentoDto> buscar(@PathVariable Long id, ServletWebRequest request) {
+        desabilitarShallowETag(request);
+
+        String eTag = definirETag();
+
+        if (eTagInalterada(request, eTag)) return null;
+
         FormaPagamento formaPagamento = cadastroFormaPagamentoService.verificarSeExiste(id);
         FormaPagamentoDto formaPagamentoDto = formaPagamentoDtoAssembler.toDto(formaPagamento);
 
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
                 .body(formaPagamentoDto);
+    }
+
+    private static void desabilitarShallowETag(ServletWebRequest request) {
+        // Desabilita o ETag gerado pelo ShallowEtagHeaderFilter
+        // para que o Deep ETag gerado manualmente seja utilizado
+        ShallowEtagHeaderFilter.disableContentCaching(request.getRequest());
+    }
+
+    private String definirETag() {
+        String eTag;
+        OffsetDateTime dataUltimaAtualizacao = cadastroFormaPagamentoService.getDataUltimaAtualizacao();
+
+        if (dataUltimaAtualizacao != null) {
+            eTag = String.valueOf(dataUltimaAtualizacao.toEpochSecond());
+        } else {
+            eTag = "0";
+        }
+
+        return eTag;
+    }
+
+    private boolean eTagInalterada(ServletWebRequest request, String eTag) {
+        return request.checkNotModified(eTag);
     }
 
     @PostMapping
