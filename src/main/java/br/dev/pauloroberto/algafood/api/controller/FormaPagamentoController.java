@@ -8,6 +8,8 @@ import br.dev.pauloroberto.algafood.domain.exception.FormaPagamentoNaoEncontrada
 import br.dev.pauloroberto.algafood.domain.exception.NegocioException;
 import br.dev.pauloroberto.algafood.domain.model.FormaPagamento;
 import br.dev.pauloroberto.algafood.domain.service.CadastroFormaPagamentoService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/formas-pagamento")
+@Api(tags = "Formas de pagamento")
 public class FormaPagamentoController {
     @Autowired
     private CadastroFormaPagamentoService cadastroFormaPagamentoService;
@@ -32,6 +35,7 @@ public class FormaPagamentoController {
     private FormaPagamentoDomainObjectAssembler formaPagamentoDomainObjectAssembler;
 
     @GetMapping
+    @ApiOperation("Lista as formas de pagamento")
     public ResponseEntity<List<FormaPagamentoDto>> listar(ServletWebRequest request) {
         desabilitarShallowETag(request);
 
@@ -49,6 +53,7 @@ public class FormaPagamentoController {
     }
 
     @GetMapping("/{id}")
+    @ApiOperation("Busca uma forma de pagamento por ID")
     public ResponseEntity<FormaPagamentoDto> buscar(@PathVariable Long id, ServletWebRequest request) {
         desabilitarShallowETag(request);
 
@@ -89,6 +94,7 @@ public class FormaPagamentoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation("Cadastra uma forma de pagamento")
     public FormaPagamentoDto adicionar(@RequestBody @Valid FormaPagamentoInputDto formaPagamentoInput) {
         try {
             FormaPagamento formaPagamento = formaPagamentoDomainObjectAssembler.toDomainObject(formaPagamentoInput);
@@ -99,6 +105,7 @@ public class FormaPagamentoController {
     }
 
     @PutMapping("/{id}")
+    @ApiOperation("Atualiza uma forma de pagamento")
     public FormaPagamentoDto atualizar(@PathVariable Long id,
                                        @RequestBody @Valid FormaPagamentoInputDto formaPagamentoInput) {
         try {
@@ -112,6 +119,7 @@ public class FormaPagamentoController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiOperation("Remove uma forma de pagamento")
     public void remover(@PathVariable Long id) {
         cadastroFormaPagamentoService.remover(id);
     }

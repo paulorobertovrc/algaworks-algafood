@@ -12,6 +12,8 @@ import br.dev.pauloroberto.algafood.domain.model.Usuario;
 import br.dev.pauloroberto.algafood.domain.filter.PedidoFilter;
 import br.dev.pauloroberto.algafood.domain.service.EmissaoPedidoService;
 import br.dev.pauloroberto.algafood.infrastructure.repository.spec.PedidoSpecs;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -25,6 +27,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/pedidos")
+@Api(tags = "Pedidos")
 public class PedidoController {
     @Autowired
     private EmissaoPedidoService emissaoPedidoService;
@@ -57,6 +60,7 @@ public class PedidoController {
 //    }
 
     @GetMapping
+    @ApiOperation("Lista os pedidos")
     public Page<PedidoResumoDto> pesquisar(PedidoFilter filtro, Pageable pageable) {
         pageable = traduzirPageable(pageable);
 
@@ -67,6 +71,7 @@ public class PedidoController {
     }
 
     @GetMapping("/{codigoPedido}")
+    @ApiOperation("Busca um pedido por código")
     public PedidoDto buscar(@PathVariable String codigoPedido) {
         Pedido pedido = emissaoPedidoService.verificarSeExiste(codigoPedido);
 
@@ -75,6 +80,7 @@ public class PedidoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation("Cria um pedido")
     public PedidoDto adicionar(@RequestBody @Valid PedidoInputDto pedidoInput) {
         Pedido pedido = pedidoDomainObjectAssembler.toDomainObject(pedidoInput);
 

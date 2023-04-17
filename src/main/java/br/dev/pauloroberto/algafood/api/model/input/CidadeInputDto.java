@@ -1,5 +1,6 @@
 package br.dev.pauloroberto.algafood.api.model.input;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +12,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 public class CidadeInputDto {
     @NotBlank
+    @ApiModelProperty(example = "São Paulo", required = true)
     private String nome;
     @Valid
     @NotNull

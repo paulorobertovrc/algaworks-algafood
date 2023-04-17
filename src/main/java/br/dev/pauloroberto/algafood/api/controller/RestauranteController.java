@@ -11,6 +11,8 @@ import br.dev.pauloroberto.algafood.domain.repository.RestauranteRepository;
 import br.dev.pauloroberto.algafood.domain.service.CadastroRestauranteService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,6 +33,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/restaurantes")
+@Api(tags = "Restaurantes")
 public class RestauranteController {
     @Autowired
     private RestauranteRepository restauranteRepository;
@@ -53,6 +56,7 @@ public class RestauranteController {
 //    }
 
     @GetMapping
+    @ApiOperation("Lista restaurantes")
     public MappingJacksonValue listar(@RequestParam(required = false) String projecao) {
         List<Restaurante> restaurantes = restauranteRepository.findAll();
         List<RestauranteDto> restaurantesDto = restauranteDtoAssembler.toDtoList(restaurantes);
@@ -71,6 +75,7 @@ public class RestauranteController {
     }
 
     @GetMapping("/{id}")
+    @ApiOperation("Busca um restaurante por ID")
     public RestauranteDto buscar(@PathVariable Long id) {
         Restaurante restaurante = cadastroRestauranteService.verificarSeExiste(id);
 
@@ -78,18 +83,21 @@ public class RestauranteController {
     }
 
     @GetMapping("/por-taxa-frete")
+    @ApiOperation("Busca restaurantes por taxa de frete")
     public List<RestauranteDto> buscarPorTaxaFrete(@RequestParam BigDecimal taxaInicial,
                                                    @RequestParam BigDecimal taxaFinal) {
         return restauranteDtoAssembler.toDtoList(restauranteRepository.findByTaxaFreteBetween(taxaInicial, taxaFinal));
     }
 
     @GetMapping("/por-nome")
+    @ApiOperation("Busca restaurantes por nome")
     public List<RestauranteDto> buscarPorNome(@RequestParam String nome,
                                               Long cozinhaId) {
         return restauranteDtoAssembler.toDtoList(restauranteRepository.consultarPorNome(nome, cozinhaId));
     }
 
     @GetMapping("/primeiro-por-nome")
+    @ApiOperation("Busca o primeiro restaurante por nome")
     public Optional<RestauranteDto> buscarPrimeiroPorNome(@RequestParam String nome) {
         return Optional.of(restauranteDtoAssembler.toDto(restauranteRepository.findFirstRestauranteByNomeContaining(nome)
                 .orElseThrow(() -> new RestauranteNaoEncontradoException(
@@ -99,16 +107,19 @@ public class RestauranteController {
     }
 
     @GetMapping("/top2-por-nome")
+    @ApiOperation("Busca os dois primeiros restaurantes por nome")
     public List<RestauranteDto> buscarTop2PorNome(@RequestParam String nome) {
         return restauranteDtoAssembler.toDtoList(restauranteRepository.findTop2ByNomeContaining(nome));
     }
 
     @GetMapping("/contagem-por-cozinha")
+    @ApiOperation("Retorna a contagem de restaurantes por cozinha")
     public int buscarContagemPorCozinha(@RequestParam Long cozinhaId) {
         return restauranteRepository.countByCozinhaId(cozinhaId);
     }
 
     @GetMapping("/busca-customizada")
+    @ApiOperation("Busca restaurantes de forma customizada")
     public List<RestauranteDto> buscarCustomizada(String nome,
                                                BigDecimal taxaFreteInicial,
                                                BigDecimal taxaFreteFinal) {
@@ -116,11 +127,13 @@ public class RestauranteController {
     }
 
     @GetMapping("/com-frete-gratis")
+    @ApiOperation("Busca restaurantes com frete grátis")
     public List<RestauranteDto> restaurantesComFreteGratis(@RequestParam(required = false) String nome) {
         return restauranteDtoAssembler.toDtoList(restauranteRepository.findComFreteGratis(nome));
     }
 
     @GetMapping("/primeiro")
+    @ApiOperation("Busca o primeiro restaurante")
     public Optional<RestauranteDto> buscarPrimeiro() {
         return Optional.of(restauranteDtoAssembler.toDto(restauranteRepository.buscarPrimeiro()
                 .orElseThrow(() -> new RestauranteNaoEncontradoException("Não existe um restaurante cadastrado"))
@@ -129,6 +142,7 @@ public class RestauranteController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation("Adiciona um restaurante")
     public RestauranteDto adicionar(@RequestBody @Valid RestauranteInputDto restauranteInput) {
         try {
             Restaurante restaurante = restauranteDomainObjectAssembler.toDomainObject(restauranteInput);
@@ -140,6 +154,7 @@ public class RestauranteController {
     }
 
     @PutMapping("/{id}")
+    @ApiOperation("Atualiza um restaurante")
     public RestauranteDto atualizar(@PathVariable Long id,
                                     @RequestBody @Valid RestauranteInputDto restauranteInput) {
         try {
@@ -155,12 +170,14 @@ public class RestauranteController {
 
     @PutMapping("/{id}/ativo")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiOperation("Ativa um restaurante")
     public void ativar(@PathVariable Long id) {
         cadastroRestauranteService.ativar(id);
     }
 
     @PutMapping("/ativacoes")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiOperation("Ativa múltiplos restaurantes")
     public void ativarMultiplos(@RequestBody List<Long> ids) {
         try {
             cadastroRestauranteService.ativar(ids);
@@ -171,6 +188,7 @@ public class RestauranteController {
 
     @DeleteMapping("/ativacoes")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiOperation("Inativa múltiplos restaurantes")
     public void inativarMultiplos(@RequestBody List<Long> ids) {
         try {
             cadastroRestauranteService.inativar(ids);
@@ -181,23 +199,27 @@ public class RestauranteController {
 
     @PutMapping("/{id}/abertura")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiOperation("Abre um restaurante")
     public void abrir(@PathVariable Long id) {
         cadastroRestauranteService.abrir(id);
     }
 
     @PutMapping("/{id}/fechamento")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiOperation("Fecha um restaurante")
     public void fechar(@PathVariable Long id) {
         cadastroRestauranteService.fechar(id);
     }
 
     @DeleteMapping("/{id}/ativo")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ApiOperation("Inativa um restaurante")
     public void inativar(@PathVariable Long id) {
         cadastroRestauranteService.inativar(id);
     }
 
     @PatchMapping("/{id}")
+    @ApiOperation("Atualiza parcialmente um restaurante")
     public RestauranteDto atualizarParcial(@PathVariable Long id,
                                            @RequestBody Map<String, Object> campos,
                                            HttpServletRequest request) {

@@ -8,6 +8,9 @@ import br.dev.pauloroberto.algafood.domain.exception.EstadoNaoEncontradoExceptio
 import br.dev.pauloroberto.algafood.domain.exception.NegocioException;
 import br.dev.pauloroberto.algafood.domain.model.Cidade;
 import br.dev.pauloroberto.algafood.domain.service.CadastroCidadeService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/cidades")
+@Api(tags = "Cidades")
 public class CidadeController {
     @Autowired
     private CadastroCidadeService cadastroCidadeService;
@@ -25,21 +29,25 @@ public class CidadeController {
     @Autowired
     private CidadeDomainObjectAssembler cidadeDomainObjectAssembler;
 
+    @ApiOperation("Lista as cidades")
     @GetMapping
     public List<CidadeDto> listar() {
         return cidadeDtoAssembler.toDtoList(cadastroCidadeService.listar());
     }
 
+    @ApiOperation("Busca uma cidade por ID")
     @GetMapping("/{id}")
-    public CidadeDto buscar(@PathVariable Long id) {
+    public CidadeDto buscar(@ApiParam("ID de uma cidade") @PathVariable Long id) {
         Cidade cidade = cadastroCidadeService.verificarSeExiste(id);
 
         return cidadeDtoAssembler.toDto(cidade);
     }
 
+    @ApiOperation("Cadastra uma cidade")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CidadeDto adicionar(@RequestBody @Valid CidadeInputDto cidadeInput) {
+    public CidadeDto adicionar(@ApiParam(name = "corpo", value = "Representação de uma nova cidade") @RequestBody
+                                   @Valid CidadeInputDto cidadeInput) {
         try {
             Cidade cidade = cidadeDomainObjectAssembler.toDomainObject(cidadeInput);
 
@@ -49,8 +57,10 @@ public class CidadeController {
         }
     }
 
+    @ApiOperation("Atualiza uma cidade")
     @PutMapping("/{id}")
-    public CidadeDto atualizar(@PathVariable Long id,
+    public CidadeDto atualizar(@ApiParam("ID de uma cidade") @PathVariable Long id,
+                            @ApiParam(name = "corpo", value = "Representação de uma cidade com os novos dados")
                             @RequestBody @Valid CidadeInputDto cidadeInput) {
         try {
         Cidade cidade = cadastroCidadeService.verificarSeExiste(id);
@@ -63,9 +73,10 @@ public class CidadeController {
         }
     }
 
+    @ApiOperation("Exclui uma cidade")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void remover(@PathVariable Long id) {
+    public void remover(@ApiParam("ID de uma cidade") @PathVariable Long id) {
         cadastroCidadeService.excluir(id);
     }
 }

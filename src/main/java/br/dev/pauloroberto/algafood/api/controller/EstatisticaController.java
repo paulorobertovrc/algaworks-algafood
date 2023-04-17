@@ -4,6 +4,8 @@ import br.dev.pauloroberto.algafood.domain.filter.VendaDiariaFilter;
 import br.dev.pauloroberto.algafood.domain.model.dto.VendaDiaria;
 import br.dev.pauloroberto.algafood.domain.service.VendaQueryService;
 import br.dev.pauloroberto.algafood.domain.service.VendaReportService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/estatisticas")
+@Api(tags = "Estatísticas")
 public class EstatisticaController {
     @Autowired
     private VendaQueryService vendaQueryService;
@@ -23,12 +26,14 @@ public class EstatisticaController {
     private VendaReportService vendaReportService;
 
     @GetMapping(path = "/vendas-diarias", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation("Retorna consulta de vendas diárias no formato JSON")
     public List<VendaDiaria> consultarVendasDiarias(VendaDiariaFilter filter, @RequestParam(required = false,
             defaultValue = "+00:00") String timeOffset) {
         return vendaQueryService.consultarVendasDiarias(filter, timeOffset);
     }
 
     @GetMapping(path = "/vendas-diarias", produces = MediaType.APPLICATION_PDF_VALUE)
+    @ApiOperation("Retorna consulta de vendas diárias no formato PDF")
     public ResponseEntity<byte[]> consultarVendasDiariasPdf(VendaDiariaFilter filter, @RequestParam(required = false,
             defaultValue = "+00:00") String timeOffset) {
         byte[] bytesPdf = vendaReportService.emitirVendasDiarias(filter, timeOffset);

@@ -7,11 +7,13 @@ import br.dev.pauloroberto.algafood.domain.service.CadastroGrupoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/grupos/{grupoId}/permissoes")
+@ApiIgnore
 public class GrupoPermissaoController {
     @Autowired
     private CadastroGrupoService cadastroGrupoService;
