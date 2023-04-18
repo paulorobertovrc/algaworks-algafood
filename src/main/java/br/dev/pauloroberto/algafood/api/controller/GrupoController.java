@@ -2,7 +2,7 @@ package br.dev.pauloroberto.algafood.api.controller;
 
 import br.dev.pauloroberto.algafood.api.assembler.GrupoDomainObjectAssembler;
 import br.dev.pauloroberto.algafood.api.assembler.GrupoDtoAssembler;
-import br.dev.pauloroberto.algafood.api.controller.openapi.GrupoControllerOpenApi;
+import br.dev.pauloroberto.algafood.api.openapi.controller.GrupoControllerOpenApi;
 import br.dev.pauloroberto.algafood.api.model.GrupoDto;
 import br.dev.pauloroberto.algafood.api.model.input.GrupoInputDto;
 import br.dev.pauloroberto.algafood.domain.exception.GrupoNaoEncontradoException;

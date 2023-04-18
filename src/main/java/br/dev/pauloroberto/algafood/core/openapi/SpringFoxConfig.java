@@ -1,11 +1,16 @@
 package br.dev.pauloroberto.algafood.core.openapi;
 
 import br.dev.pauloroberto.algafood.api.exception.handler.Problem;
+import br.dev.pauloroberto.algafood.api.model.CozinhaDto;
+import br.dev.pauloroberto.algafood.api.openapi.model.CozinhasModelOpenApi;
+import br.dev.pauloroberto.algafood.api.openapi.model.PageableModelOpenApi;
 import com.fasterxml.classmate.TypeResolver;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,6 +26,8 @@ import springfox.documentation.spring.web.plugins.Docket;
 
 import java.util.List;
 import java.util.function.Consumer;
+
+import static springfox.documentation.schema.AlternateTypeRules.newRule;
 
 @Configuration
 @Import(BeanValidatorPluginsConfiguration.class)
@@ -43,6 +50,9 @@ public class SpringFoxConfig {
                 .globalResponses(HttpMethod.PUT, globalPostPutResponseMessages())
                 .globalResponses(HttpMethod.DELETE, globalDeleteResponseMessages())
                 .additionalModels(typeResolver.resolve(Problem.class))
+                .directModelSubstitute(Pageable.class, PageableModelOpenApi.class) // Substitui o Pageable pelo PageableModelOpenApi na documentação
+                .alternateTypeRules(newRule(typeResolver.resolve(Page.class, CozinhaDto.class),
+                        CozinhasModelOpenApi.class)) // Substitui o Page<CozinhaDto> pelo CozinhasModelOpenApi na documentação
                 .apiInfo(apiInfo())
                 .tags(new Tag("Cidades", "Gerencia as cidades"),
                         new Tag("Grupos", "Gerencia os grupos de usuários"),

@@ -1,4 +1,4 @@
-package br.dev.pauloroberto.algafood.api.controller.openapi;
+package br.dev.pauloroberto.algafood.api.openapi.controller;
 
 import br.dev.pauloroberto.algafood.api.exception.handler.Problem;
 import br.dev.pauloroberto.algafood.api.model.CidadeDto;

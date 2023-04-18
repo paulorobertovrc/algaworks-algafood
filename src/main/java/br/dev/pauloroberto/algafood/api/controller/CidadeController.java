@@ -2,7 +2,7 @@ package br.dev.pauloroberto.algafood.api.controller;
 
 import br.dev.pauloroberto.algafood.api.assembler.CidadeDomainObjectAssembler;
 import br.dev.pauloroberto.algafood.api.assembler.CidadeDtoAssembler;
-import br.dev.pauloroberto.algafood.api.controller.openapi.CidadeControllerOpenApi;
+import br.dev.pauloroberto.algafood.api.openapi.controller.CidadeControllerOpenApi;
 import br.dev.pauloroberto.algafood.api.model.CidadeDto;
 import br.dev.pauloroberto.algafood.api.model.input.CidadeInputDto;
 import br.dev.pauloroberto.algafood.domain.exception.EstadoNaoEncontradoException;
