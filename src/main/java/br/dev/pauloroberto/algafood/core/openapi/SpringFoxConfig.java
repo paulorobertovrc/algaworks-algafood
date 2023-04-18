@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.web.context.request.ServletWebRequest;
 import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
 import springfox.documentation.builders.*;
 import springfox.documentation.service.ApiInfo;
@@ -33,6 +34,11 @@ import static springfox.documentation.schema.AlternateTypeRules.newRule;
 @Import(BeanValidatorPluginsConfiguration.class)
 public class SpringFoxConfig {
     // http://localhost:8080/swagger-ui/index.html - URL para acessar a documentação da API
+    // http://localhost:8080/v3/api-docs - URL para acessar a documentação da API em formato JSON
+
+    // Esta classe estabelece parâmetros de configuração do Swagger. Para isso, é necessário criar um Bean do tipo Docket.
+    // O Docket é o objeto que contém as configurações do Swagger. Ele é criado através do método apiDocket(), que retorna um Docket contendo as configurações.
+
     @Bean
     public Docket apiDocket() {
         TypeResolver typeResolver = new TypeResolver();
@@ -53,6 +59,7 @@ public class SpringFoxConfig {
                 .directModelSubstitute(Pageable.class, PageableModelOpenApi.class) // Substitui o Pageable pelo PageableModelOpenApi na documentação
                 .alternateTypeRules(newRule(typeResolver.resolve(Page.class, CozinhaDto.class),
                         CozinhasModelOpenApi.class)) // Substitui o Page<CozinhaDto> pelo CozinhasModelOpenApi na documentação
+                .ignoredParameterTypes(ServletWebRequest.class) // Ignora o ServletWebRequest na documentação
                 .apiInfo(apiInfo())
                 .tags(new Tag("Cidades", "Gerencia as cidades"),
                         new Tag("Grupos", "Gerencia os grupos de usuários"),
