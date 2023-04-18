@@ -4,15 +4,15 @@ import br.dev.pauloroberto.algafood.api.assembler.FormaPagamentoDomainObjectAsse
 import br.dev.pauloroberto.algafood.api.assembler.FormaPagamentoDtoAssembler;
 import br.dev.pauloroberto.algafood.api.model.FormaPagamentoDto;
 import br.dev.pauloroberto.algafood.api.model.input.FormaPagamentoInputDto;
+import br.dev.pauloroberto.algafood.api.openapi.controller.FormaPagamentoControllerOpenApi;
 import br.dev.pauloroberto.algafood.domain.exception.FormaPagamentoNaoEncontradaException;
 import br.dev.pauloroberto.algafood.domain.exception.NegocioException;
 import br.dev.pauloroberto.algafood.domain.model.FormaPagamento;
 import br.dev.pauloroberto.algafood.domain.service.CadastroFormaPagamentoService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -24,9 +24,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @RestController
-@RequestMapping("/formas-pagamento")
-@Api(tags = "Formas de pagamento")
-public class FormaPagamentoController {
+@RequestMapping(value = "/formas-pagamento", produces = MediaType.APPLICATION_JSON_VALUE)
+public class FormaPagamentoController implements FormaPagamentoControllerOpenApi {
     @Autowired
     private CadastroFormaPagamentoService cadastroFormaPagamentoService;
     @Autowired
@@ -35,7 +34,6 @@ public class FormaPagamentoController {
     private FormaPagamentoDomainObjectAssembler formaPagamentoDomainObjectAssembler;
 
     @GetMapping
-    @ApiOperation("Lista as formas de pagamento")
     public ResponseEntity<List<FormaPagamentoDto>> listar(ServletWebRequest request) {
         desabilitarShallowETag(request);
 
@@ -53,7 +51,6 @@ public class FormaPagamentoController {
     }
 
     @GetMapping("/{id}")
-    @ApiOperation("Busca uma forma de pagamento por ID")
     public ResponseEntity<FormaPagamentoDto> buscar(@PathVariable Long id, ServletWebRequest request) {
         desabilitarShallowETag(request);
 
@@ -94,7 +91,6 @@ public class FormaPagamentoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @ApiOperation("Cadastra uma forma de pagamento")
     public FormaPagamentoDto adicionar(@RequestBody @Valid FormaPagamentoInputDto formaPagamentoInput) {
         try {
             FormaPagamento formaPagamento = formaPagamentoDomainObjectAssembler.toDomainObject(formaPagamentoInput);
@@ -105,7 +101,6 @@ public class FormaPagamentoController {
     }
 
     @PutMapping("/{id}")
-    @ApiOperation("Atualiza uma forma de pagamento")
     public FormaPagamentoDto atualizar(@PathVariable Long id,
                                        @RequestBody @Valid FormaPagamentoInputDto formaPagamentoInput) {
         try {
@@ -119,8 +114,8 @@ public class FormaPagamentoController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ApiOperation("Remove uma forma de pagamento")
     public void remover(@PathVariable Long id) {
         cadastroFormaPagamentoService.remover(id);
     }
+
 }
