@@ -2,8 +2,10 @@ package br.dev.pauloroberto.algafood.core.openapi;
 
 import br.dev.pauloroberto.algafood.api.exception.handler.Problem;
 import br.dev.pauloroberto.algafood.api.model.CozinhaDto;
+import br.dev.pauloroberto.algafood.api.model.PedidoResumoDto;
 import br.dev.pauloroberto.algafood.api.openapi.model.CozinhasModelOpenApi;
 import br.dev.pauloroberto.algafood.api.openapi.model.PageableModelOpenApi;
+import br.dev.pauloroberto.algafood.api.openapi.model.PedidosResumoModelOpenApi;
 import com.fasterxml.classmate.TypeResolver;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
@@ -17,8 +19,10 @@ import org.springframework.http.MediaType;
 import org.springframework.web.context.request.ServletWebRequest;
 import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
 import springfox.documentation.builders.*;
-import springfox.documentation.schema.ScalarType;
-import springfox.documentation.service.*;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
+import springfox.documentation.service.Response;
+import springfox.documentation.service.Tag;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.json.JacksonModuleRegistrar;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -53,19 +57,21 @@ public class SpringFoxConfig {
                 .globalResponses(HttpMethod.POST, globalPostPutResponseMessages())
                 .globalResponses(HttpMethod.PUT, globalPostPutResponseMessages())
                 .globalResponses(HttpMethod.DELETE, globalDeleteResponseMessages())
-                .globalRequestParameters(List.of(
-                        new RequestParameterBuilder()
-                                .name("campos")
-                                .description("Nomes das propriedades para filtrar na resposta, separados por vírgula")
-                                .in(ParameterType.QUERY)
-                                .query(q -> q.model(m -> m.scalarModel(ScalarType.STRING)))
-                                .required(false)
-                                .build()
-                )) // Adiciona um parâmetro global para todos os endpoints. Este parâmetro é utilizado para filtrar as propriedades que serão retornadas na resposta.
+//                .globalRequestParameters(List.of(
+//                        new RequestParameterBuilder()
+//                                .name("campos")
+//                                .description("Nomes das propriedades para filtrar na resposta, separados por vírgula")
+//                                .in(ParameterType.QUERY)
+//                                .query(q -> q.model(m -> m.scalarModel(ScalarType.STRING)))
+//                                .required(false)
+//                                .build()
+//                )) // Adiciona um parâmetro global para todos os endpoints. Este parâmetro é utilizado para filtrar as propriedades que serão retornadas na resposta.
                 .additionalModels(typeResolver.resolve(Problem.class))
                 .directModelSubstitute(Pageable.class, PageableModelOpenApi.class) // Substitui o Pageable pelo PageableModelOpenApi na documentação
                 .alternateTypeRules(newRule(typeResolver.resolve(Page.class, CozinhaDto.class),
                         CozinhasModelOpenApi.class)) // Substitui o Page<CozinhaDto> pelo CozinhasModelOpenApi na documentação
+                .alternateTypeRules(newRule(typeResolver.resolve(Page.class, PedidoResumoDto.class),
+                        PedidosResumoModelOpenApi.class)) // Substitui o Page<CozinhaDto> pelo CozinhasModelOpenApi na documentação
                 .ignoredParameterTypes(ServletWebRequest.class) // Ignora o ServletWebRequest na documentação
                 .apiInfo(apiInfo())
                 .tags(new Tag("Cidades", "Gerencia as cidades"),

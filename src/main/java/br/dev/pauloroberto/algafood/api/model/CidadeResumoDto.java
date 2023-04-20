@@ -1,5 +1,6 @@
 package br.dev.pauloroberto.algafood.api.model;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +14,12 @@ public class CidadeResumoDto {
     // do RestauranteDto. Dentro do objeto CidadeResumoDto, teríamos ainda o atributo nomeEstado, que é o nome do estado
     // ou um objeto EstadoResumoDto.
 
+    @ApiModelProperty(example = "1")
     private Long id;
+
+    @ApiModelProperty(example = "Campo Grande")
     private String nome;
+
+    @ApiModelProperty(example = "Mato Grosso do Sul [O nome do estado pode ser informado por extenso ou por sigla]")
     private String nomeEstado;
 }

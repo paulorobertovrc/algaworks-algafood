@@ -1,16 +1,26 @@
 package br.dev.pauloroberto.algafood.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
 public class EnderecoDto {
+    @ApiModelProperty(example = "11000-000")
     private String cep;
+
+    @ApiModelProperty(example = "Rua das Laranjeiras")
     private String logradouro;
+
+    @ApiModelProperty(example = "1000")
     private String numero;
+
+    @ApiModelProperty(example = "Apto 101")
     private String complemento;
+
+    @ApiModelProperty(example = "Centro")
     private String bairro;
     private String nomeCidade;
     private String nomeCidadeNomeEstado; // Alternativamente, poderia ser feita uma configuração na classe ModelMapperConfig,
