@@ -10,13 +10,15 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class SquigglyConfig {
+    // Exemplo: http://localhost:8080/restaurantes?campos=nome,taxaFrete - Neste exemplo, apenas as propriedades nome e taxaFrete serão retornadas na resposta.
+    // O Squiggly permite filtrar as propriedades que serão retornadas na resposta de uma requisição.
     @Bean
     public FilterRegistrationBean<SquigglyRequestFilter> squigglyRequestFilter(ObjectMapper objectMapper) {
         Squiggly.init(objectMapper, new RequestSquigglyContextProvider("campos", null));
 
         FilterRegistrationBean<SquigglyRequestFilter> filterRegistrationBean = new FilterRegistrationBean<>();
         filterRegistrationBean.setFilter(new SquigglyRequestFilter());
-        filterRegistrationBean.addUrlPatterns("/*"); // TODO: limitar para apenas as URLs que precisam
+        filterRegistrationBean.addUrlPatterns("/pedidos/*", "/restaurantes/*");
         filterRegistrationBean.setOrder(1);
 
         return filterRegistrationBean;
