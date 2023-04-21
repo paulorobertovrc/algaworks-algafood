@@ -32,13 +32,13 @@ public interface FormaPagamentoControllerOpenApi {
                     schema = @Schema(implementation = Problem.class)
             ))
     })
-    ResponseEntity<FormaPagamentoDto> buscar(@ApiParam(value = "ID de uma forma de pagamento", example = "1")
-                                                        Long id, ServletWebRequest request);
+    ResponseEntity<FormaPagamentoDto> buscar(@ApiParam(value = "ID de uma forma de pagamento", example = "1",
+            required = true) Long id, ServletWebRequest request);
 
     @ApiOperation("Cadastra uma forma de pagamento")
     @ApiResponse(responseCode = "201", description = "Forma de pagamento cadastrada")
-    FormaPagamentoDto adicionar(@ApiParam(name = "corpo", value = "Representação de uma nova forma de pagamento")
-                                           FormaPagamentoInputDto formaPagamentoInput);
+    FormaPagamentoDto adicionar(@ApiParam(name = "corpo", value = "Representação de uma nova forma de pagamento",
+            required = true) FormaPagamentoInputDto formaPagamentoInput);
 
     @ApiOperation("Atualiza uma forma de pagamento")
     @ApiResponses({
@@ -48,9 +48,9 @@ public interface FormaPagamentoControllerOpenApi {
                     schema = @Schema(implementation = Problem.class)
             ))
     })
-    FormaPagamentoDto atualizar(@ApiParam(value = "ID de uma forma de pagamento", example = "1") Long id,
-                                @ApiParam(name = "corpo", value = "Representação de uma nova forma com os novos dados")
-                                FormaPagamentoInputDto formaPagamentoInput);
+    FormaPagamentoDto atualizar(@ApiParam(value = "ID de uma forma de pagamento", example = "1", required = true)
+                                Long id, @ApiParam(name = "corpo", value = "Representação de uma nova forma com os" +
+            " novos dados", required = true) FormaPagamentoInputDto formaPagamentoInput);
 
     @ApiOperation("Remove uma forma de pagamento")
     @ApiResponses({
@@ -60,6 +60,6 @@ public interface FormaPagamentoControllerOpenApi {
                     schema = @Schema(implementation = Problem.class)
             ))
     })
-    void remover(@ApiParam(value = "ID de uma forma de pagamento", example = "1") Long id);
+    void remover(@ApiParam(value = "ID de uma forma de pagamento", example = "1", required = true) Long id);
 
 }

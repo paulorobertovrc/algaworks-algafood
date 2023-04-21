@@ -25,12 +25,12 @@ public interface CidadeControllerOpenApi {
             @ApiResponse(responseCode = "404", description = "Cidade não encontrada", content = @Content(
                     schema = @Schema(implementation = Problem.class), mediaType = "application/json"))
     })
-    CidadeDto buscar(@ApiParam(value = "ID de uma cidade", example = "1") Long id);
+    CidadeDto buscar(@ApiParam(value = "ID de uma cidade", example = "1", required = true) Long id);
 
     @ApiOperation("Cadastra uma cidade")
     @ApiResponse(responseCode = "201", description = "Cidade cadastrada", content = @Content(
             schema = @Schema(implementation = Problem.class), mediaType = "application/json"))
-    CidadeDto adicionar(@ApiParam(name = "corpo", value = "Representação de uma nova cidade")
+    CidadeDto adicionar(@ApiParam(name = "corpo", value = "Representação de uma nova cidade", required = true)
                         CidadeInputDto cidadeInput);
 
     @ApiOperation("Atualiza uma cidade")
@@ -40,8 +40,8 @@ public interface CidadeControllerOpenApi {
                     schema = @Schema(implementation = Problem.class), mediaType = "application/json"))
     })
     CidadeDto atualizar(@ApiParam("ID de uma cidade")Long id,
-                        @ApiParam(name = "corpo", value = "Representação de uma cidade com os novos dados")
-                               CidadeInputDto cidadeInput);
+                        @ApiParam(name = "corpo", value = "Representação de uma cidade com os novos dados",
+                                required = true) CidadeInputDto cidadeInput);
 
     @ApiOperation("Exclui uma cidade")
     @ApiResponses(value = {
@@ -49,6 +49,6 @@ public interface CidadeControllerOpenApi {
             @ApiResponse(responseCode = "404", description = "Cidade não encontrada", content = @Content(
                     schema = @Schema(implementation = Problem.class), mediaType = "application/json"))
     })
-    void remover(@ApiParam("ID de uma cidade") Long id);
+    void remover(@ApiParam(value = "ID de uma cidade", required = true) Long id);
 
 }

@@ -25,11 +25,12 @@ public interface GrupoControllerOpenApi {
             @ApiResponse(responseCode = "404", description = "Grupo não encontrado", content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = Problem.class)))
     })
-    GrupoDto buscar(@ApiParam(value = "ID de um Grupo", example = "1") Long id);
+    GrupoDto buscar(@ApiParam(value = "ID de um Grupo", example = "1", required = true) Long id);
 
     @ApiOperation("Cadastra um grupo")
     @ApiResponse(responseCode = "201", description = "Grupo cadastrado")
-    GrupoDto adicionar(@ApiParam(name = "corpo", value = "Representação de um novo grupo") GrupoInputDto grupoInput);
+    GrupoDto adicionar(@ApiParam(name = "corpo", value = "Representação de um novo grupo", required = true)
+                       GrupoInputDto grupoInput);
 
     @ApiOperation("Atualiza um grupo")
     @ApiResponses({
@@ -37,9 +38,9 @@ public interface GrupoControllerOpenApi {
             @ApiResponse(responseCode = "404", description = "Grupo não encontrado", content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = Problem.class)))
     })
-    GrupoDto atualizar(@ApiParam(name = "ID de um Grupo", value = "1") Long id,
-                       @ApiParam(name = "corpo", value = "Representação de um Grupo com os novos dados")
-                       GrupoInputDto grupoInput);
+    GrupoDto atualizar(@ApiParam(name = "ID de um Grupo", value = "1", required = true) Long id,
+                       @ApiParam(name = "corpo", value = "Representação de um Grupo com os novos dados",
+                               required = true) GrupoInputDto grupoInput);
 
     @ApiOperation("Remove um grupo")
     @ApiResponses({
@@ -47,6 +48,6 @@ public interface GrupoControllerOpenApi {
             @ApiResponse(responseCode = "404", description = "Grupo não encontrado", content = @Content(
                     mediaType = "application/json", schema = @Schema(implementation = Problem.class)))
     })
-    void remover(@ApiParam(name = "ID de um Grupo", example = "1") Long id);
+    void remover(@ApiParam(name = "ID de um Grupo", example = "1", required = true) Long id);
 
 }

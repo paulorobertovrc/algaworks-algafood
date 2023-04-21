@@ -33,7 +33,7 @@ public interface CozinhaControllerOpenApi {
                     schema = @Schema(implementation = Problem.class)
             ))
     })
-    CozinhaDto buscar(@ApiParam(value = "ID de uma cozinha", example = "1") Long id);
+    CozinhaDto buscar(@ApiParam(value = "ID de uma cozinha", example = "1", required = true) Long id);
 
     @ApiOperation("Busca uma cozinha por nome")
     @ApiResponses({
@@ -46,8 +46,8 @@ public interface CozinhaControllerOpenApi {
                     schema = @Schema(implementation = Problem.class)
             ))
     })
-    ResponseEntity<List<CozinhaDto>> buscarTodasPorNome(@ApiParam(value = "Nome de uma cozinha", example = "Brasileira")
-                                                        String nome);
+    ResponseEntity<List<CozinhaDto>> buscarTodasPorNome(@ApiParam(value = "Nome de uma cozinha", example = "Brasileira",
+            required = true) String nome);
 
     @ApiOperation("Busca uma cozinha por nome exato")
     @ApiResponses({
@@ -60,19 +60,21 @@ public interface CozinhaControllerOpenApi {
                     schema = @Schema(implementation = Problem.class)
             ))
     })
-    ResponseEntity<CozinhaDto> buscarPorNomeExato(@ApiParam(value = "Nome de uma cozinha", example = "Brasileira")
-                                                  String nome);
+    ResponseEntity<CozinhaDto> buscarPorNomeExato(@ApiParam(value = "Nome de uma cozinha", example = "Brasileira",
+            required = true) String nome);
 
     @ApiOperation("Verifica se existe uma cozinha com o nome informado")
     @ApiResponse(responseCode = "400", description = "Nome da cozinha inválido", content = @Content(
             mediaType = MediaType.APPLICATION_JSON_VALUE,
             schema = @Schema(implementation = Problem.class)))
-    ResponseEntity<Boolean> existePorNome(@ApiParam(value = "Nome de uma cozinha", example = "Brasileira") String nome);
+    ResponseEntity<Boolean> existePorNome(@ApiParam(value = "Nome de uma cozinha", example = "Brasileira",
+            required = true) String nome);
 
     @ApiOperation("Cadastra uma cozinha")
     @ApiResponse(responseCode = "201", description = "Cozinha cadastrada", content = @Content(
             schema = @Schema(implementation = Problem.class), mediaType = MediaType.APPLICATION_JSON_VALUE))
-    CozinhaDto adicionar(@ApiParam(name = "corpo", value = "Representação de uma nova cidade") CozinhaInputDto cozinhaInput);
+    CozinhaDto adicionar(@ApiParam(name = "corpo", value = "Representação de uma nova cidade", required = true)
+                         CozinhaInputDto cozinhaInput);
 
     @ApiOperation("Atualiza uma cozinha")
     @ApiResponses({
@@ -85,8 +87,9 @@ public interface CozinhaControllerOpenApi {
                     schema = @Schema(implementation = Problem.class)
             ))
     })
-    CozinhaDto atualizar(@ApiParam("ID de uma cidade") Long id,
-                         @ApiParam(name = "corpo", value = "Representação de uma cidade com os novos dados") CozinhaInputDto cozinhaInput);
+    CozinhaDto atualizar(@ApiParam(value = "ID de uma cidade", required = true) Long id,
+                         @ApiParam(name = "corpo", value = "Representação de uma cidade com os novos dados",
+                                 required = true) CozinhaInputDto cozinhaInput);
 
     @ApiOperation("Remove uma cozinha")
     @ApiResponses({
@@ -99,6 +102,6 @@ public interface CozinhaControllerOpenApi {
                     schema = @Schema(implementation = Problem.class)
             ))
     })
-    void remover(@ApiParam("ID de uma cidade") Long id);
+    void remover(@ApiParam(value = "ID de uma cidade", required = true) Long id);
 
 }
