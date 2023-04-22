@@ -17,10 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(path = "/cidades", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -34,29 +30,14 @@ public class CidadeController implements CidadeControllerOpenApi {
 
     @GetMapping
     public CollectionModel<CidadeDto> listar() {
-        List<CidadeDto> cidadesDto = cidadeDtoAssembler.toDtoList(cadastroCidadeService.listar());
-        cidadesDto.forEach(cidadeDto -> {
-            cidadeDto.add(linkTo(methodOn(CidadeController.class).buscar(cidadeDto.getId())).withSelfRel());
-            cidadeDto.add(linkTo(methodOn(CidadeController.class).listar()).withRel("cidades"));
-            cidadeDto.getEstado().add(linkTo(methodOn(EstadoController.class).buscar(cidadeDto.getEstado().getId()))
-                    .withSelfRel());
-        });
-
-        return CollectionModel.of(cidadesDto, linkTo(methodOn(CidadeController.class).listar()).withSelfRel());
+        return cidadeDtoAssembler.toCollectionModel(
+                cadastroCidadeService.listar());
     }
 
     @GetMapping("/{id}")
     public CidadeDto buscar(@PathVariable Long id) {
-        Cidade cidade = cadastroCidadeService.verificarSeExiste(id);
-
-        CidadeDto cidadeDto = cidadeDtoAssembler.toDto(cidade);
-
-        cidadeDto.add(linkTo(methodOn(CidadeController.class).buscar(cidadeDto.getId())).withSelfRel());
-        cidadeDto.add(linkTo(methodOn(CidadeController.class).listar()).withRel("cidades"));
-        cidadeDto.getEstado().add(linkTo(methodOn(EstadoController.class).buscar(cidadeDto.getEstado().getId()))
-                .withSelfRel());
-
-        return cidadeDto;
+        return cidadeDtoAssembler.toModel(
+                cadastroCidadeService.verificarSeExiste(id));
     }
 
     @PostMapping
@@ -64,7 +45,7 @@ public class CidadeController implements CidadeControllerOpenApi {
     public CidadeDto adicionar(@RequestBody @Valid CidadeInputDto cidadeInput) {
         try {
             Cidade cidade = cidadeDomainObjectAssembler.toDomainObject(cidadeInput);
-            CidadeDto cidadeDto = cidadeDtoAssembler.toDto(cadastroCidadeService.salvar(cidade));
+            CidadeDto cidadeDto = cidadeDtoAssembler.toModel(cadastroCidadeService.salvar(cidade));
             ResourceUriHelper.addUriInResponseHeader(cidadeDto.getId());
 
             return cidadeDto;
@@ -80,7 +61,7 @@ public class CidadeController implements CidadeControllerOpenApi {
 
         cidadeDomainObjectAssembler.copyToDomainObject(cidadeInput, cidade);
 
-        return cidadeDtoAssembler.toDto(cadastroCidadeService.salvar(cidade));
+        return cidadeDtoAssembler.toModel(cadastroCidadeService.salvar(cidade));
         } catch (EstadoNaoEncontradoException e) {
             throw new NegocioException(e.getMessage(), e);
         }
