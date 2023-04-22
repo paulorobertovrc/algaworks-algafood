@@ -1,15 +1,15 @@
 package br.dev.pauloroberto.algafood.api.controller;
 
+import br.dev.pauloroberto.algafood.api.openapi.controller.FluxoPedidoControllerOpenApi;
 import br.dev.pauloroberto.algafood.domain.service.FluxoPedidoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
-@RequestMapping("/pedidos/{codigoPedido}")
-@ApiIgnore
-public class PedidoAlteracaoStatusController {
+@RequestMapping(path = "/pedidos/{codigoPedido}", produces = MediaType.APPLICATION_JSON_VALUE)
+public class FluxoPedidoController implements FluxoPedidoControllerOpenApi {
     @Autowired
     private FluxoPedidoService alteracaoStatusPedidoService;
 

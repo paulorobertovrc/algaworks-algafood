@@ -7,6 +7,7 @@ import br.dev.pauloroberto.algafood.api.openapi.model.CozinhasModelOpenApi;
 import br.dev.pauloroberto.algafood.api.openapi.model.PageableModelOpenApi;
 import br.dev.pauloroberto.algafood.api.openapi.model.PedidosResumoModelOpenApi;
 import com.fasterxml.classmate.TypeResolver;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.context.request.ServletWebRequest;
 import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
 import springfox.documentation.builders.*;
@@ -72,7 +74,7 @@ public class SpringFoxConfig {
                         CozinhasModelOpenApi.class)) // Substitui o Page<CozinhaDto> pelo CozinhasModelOpenApi na documentação
                 .alternateTypeRules(newRule(typeResolver.resolve(Page.class, PedidoResumoDto.class),
                         PedidosResumoModelOpenApi.class)) // Substitui o Page<CozinhaDto> pelo CozinhasModelOpenApi na documentação
-                .ignoredParameterTypes(ServletWebRequest.class) // Ignora o ServletWebRequest na documentação
+                .ignoredParameterTypes(ServletWebRequest.class, FilterProvider.class, MappingJacksonValue.class) // Ignora o ServletWebRequest na documentação
                 .apiInfo(apiInfo())
                 .tags(new Tag("Cidades", "Gerencia as cidades"),
                         new Tag("Grupos", "Gerencia os grupos de usuários"),
@@ -81,6 +83,7 @@ public class SpringFoxConfig {
                         new Tag("Pedidos", "Gerencia os pedidos"),
                         new Tag("Restaurantes", "Gerencia os restaurantes"),
                         new Tag("Estados", "Gerencia os estados"),
+                        new Tag("Produtos", "Gerencia os produtos de restaurantes"),
                         new Tag("Usuários", "Gerencia os usuários"),
                         new Tag("Estatísticas", "Estatísticas da AlgaFood"),
                         new Tag("Permissões", "Gerencia as permissões"));

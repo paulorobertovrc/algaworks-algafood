@@ -6,23 +6,22 @@ import br.dev.pauloroberto.algafood.api.model.UsuarioDto;
 import br.dev.pauloroberto.algafood.api.model.input.SenhaInputDto;
 import br.dev.pauloroberto.algafood.api.model.input.UsuarioComSenhaInputDto;
 import br.dev.pauloroberto.algafood.api.model.input.UsuarioInputDto;
+import br.dev.pauloroberto.algafood.api.openapi.controller.UsuarioControllerOpenApi;
 import br.dev.pauloroberto.algafood.domain.exception.NegocioException;
 import br.dev.pauloroberto.algafood.domain.exception.UsuarioNaoEncontradoException;
 import br.dev.pauloroberto.algafood.domain.model.Usuario;
 import br.dev.pauloroberto.algafood.domain.service.CadastroUsuarioService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/usuarios")
-@Api(tags = "Usuários")
-public class UsuarioController {
+@RequestMapping(path = "/usuarios", produces = MediaType.APPLICATION_JSON_VALUE)
+public class UsuarioController implements UsuarioControllerOpenApi {
     @Autowired
     private CadastroUsuarioService cadastroUsuarioService;
     @Autowired
@@ -31,20 +30,17 @@ public class UsuarioController {
     private UsuarioDomainObjectAssembler usuarioDomainObjectAssembler;
 
     @GetMapping
-    @ApiOperation("Lista os usuários")
     public List<UsuarioDto> listar() {
         return usuarioDtoAssembler.toDtoList(cadastroUsuarioService.listar());
     }
 
     @GetMapping("/{id}")
-    @ApiOperation("Busca um usuário por ID")
     public UsuarioDto buscar(@PathVariable Long id) {
         return usuarioDtoAssembler.toDto(cadastroUsuarioService.verificarSeExiste(id));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @ApiOperation("Cadastra um usuário")
     public UsuarioDto adicionar(@RequestBody @Valid UsuarioComSenhaInputDto usuarioInput) {
         Usuario usuario = usuarioDomainObjectAssembler.toDomainObject(usuarioInput);
 
@@ -52,7 +48,6 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
-    @ApiOperation("Atualiza um usuário")
     public UsuarioDto atualizar(@PathVariable Long id,
                                 @RequestBody @Valid UsuarioInputDto usuarioInput) {
         try {
@@ -67,7 +62,6 @@ public class UsuarioController {
 
     @PutMapping("/{id}/senha")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ApiOperation("Altera a senha de um usuário")
     public void alterarSenha(@PathVariable Long id,
                              @RequestBody @Valid SenhaInputDto senhaInput) {
         try {
@@ -81,7 +75,6 @@ public class UsuarioController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ApiOperation("Remove um usuário")
     public void remover(@PathVariable Long id) {
         cadastroUsuarioService.remover(id);
     }

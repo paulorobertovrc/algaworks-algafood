@@ -4,21 +4,22 @@ import br.dev.pauloroberto.algafood.api.assembler.ProdutoDomainObjectAssembler;
 import br.dev.pauloroberto.algafood.api.assembler.ProdutoDtoAssembler;
 import br.dev.pauloroberto.algafood.api.model.ProdutoDto;
 import br.dev.pauloroberto.algafood.api.model.input.ProdutoInputDto;
+import br.dev.pauloroberto.algafood.api.openapi.controller.RestauranteProdutoControllerOpenApi;
 import br.dev.pauloroberto.algafood.domain.model.Produto;
 import br.dev.pauloroberto.algafood.domain.service.CadastroProdutoService;
 import br.dev.pauloroberto.algafood.domain.service.CadastroRestauranteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/restaurantes/{restauranteId}/produtos")
-@ApiIgnore
-public class RestauranteProdutoController {
+@RequestMapping(path = "/restaurantes/{restauranteId}/produtos", produces = MediaType.APPLICATION_JSON_VALUE)
+//@ApiIgnore // Desnecessária após a criação do RestauranteProdutoControllerOpenApi
+public class RestauranteProdutoController implements RestauranteProdutoControllerOpenApi {
     @Autowired
     private CadastroRestauranteService cadastroRestauranteService;
     @Autowired
