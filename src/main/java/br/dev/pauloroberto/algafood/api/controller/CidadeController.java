@@ -11,6 +11,7 @@ import br.dev.pauloroberto.algafood.domain.exception.NegocioException;
 import br.dev.pauloroberto.algafood.domain.model.Cidade;
 import br.dev.pauloroberto.algafood.domain.service.CadastroCidadeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -32,8 +33,16 @@ public class CidadeController implements CidadeControllerOpenApi {
     private CidadeDomainObjectAssembler cidadeDomainObjectAssembler;
 
     @GetMapping
-    public List<CidadeDto> listar() {
-        return cidadeDtoAssembler.toDtoList(cadastroCidadeService.listar());
+    public CollectionModel<CidadeDto> listar() {
+        List<CidadeDto> cidadesDto = cidadeDtoAssembler.toDtoList(cadastroCidadeService.listar());
+        cidadesDto.forEach(cidadeDto -> {
+            cidadeDto.add(linkTo(methodOn(CidadeController.class).buscar(cidadeDto.getId())).withSelfRel());
+            cidadeDto.add(linkTo(methodOn(CidadeController.class).listar()).withRel("cidades"));
+            cidadeDto.getEstado().add(linkTo(methodOn(EstadoController.class).buscar(cidadeDto.getEstado().getId()))
+                    .withSelfRel());
+        });
+
+        return CollectionModel.of(cidadesDto, linkTo(methodOn(CidadeController.class).listar()).withSelfRel());
     }
 
     @GetMapping("/{id}")
@@ -42,9 +51,9 @@ public class CidadeController implements CidadeControllerOpenApi {
 
         CidadeDto cidadeDto = cidadeDtoAssembler.toDto(cidade);
 
-        cidadeDto.add(linkTo(methodOn(CidadeController.class).buscar(id)).withSelfRel());
+        cidadeDto.add(linkTo(methodOn(CidadeController.class).buscar(cidadeDto.getId())).withSelfRel());
         cidadeDto.add(linkTo(methodOn(CidadeController.class).listar()).withRel("cidades"));
-        cidadeDto.getEstado().add(linkTo(methodOn(EstadoController.class).buscar(cidade.getEstado().getId()))
+        cidadeDto.getEstado().add(linkTo(methodOn(EstadoController.class).buscar(cidadeDto.getEstado().getId()))
                 .withSelfRel());
 
         return cidadeDto;
