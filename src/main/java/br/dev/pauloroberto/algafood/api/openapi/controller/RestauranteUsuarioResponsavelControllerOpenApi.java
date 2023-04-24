@@ -9,9 +9,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.MediaType;
-
-import java.util.List;
 
 @Api(tags = "Restaurantes")
 public interface RestauranteUsuarioResponsavelControllerOpenApi {
@@ -20,7 +19,8 @@ public interface RestauranteUsuarioResponsavelControllerOpenApi {
             mediaType = MediaType.APPLICATION_JSON_VALUE,
             schema = @Schema(implementation = Problem.class)
     ))
-    List<UsuarioDto> listar(@ApiParam(value = "ID do restaurante", example = "1", required = true) Long restauranteId);
+    CollectionModel<UsuarioDto> listar(@ApiParam(value = "ID do restaurante", example = "1", required = true)
+                                       Long restauranteId);
 
     @ApiModelProperty("Associa um usuário responsável a um restaurante")
     @ApiResponses({

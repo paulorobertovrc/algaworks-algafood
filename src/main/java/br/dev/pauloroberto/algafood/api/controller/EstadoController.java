@@ -11,12 +11,12 @@ import br.dev.pauloroberto.algafood.domain.model.Estado;
 import br.dev.pauloroberto.algafood.domain.repository.EstadoRepository;
 import br.dev.pauloroberto.algafood.domain.service.CadastroEstadoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "/estados", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -31,15 +31,16 @@ public class EstadoController implements EstadoControllerOpenApi {
     private EstadoDomainObjectAssembler estadoDomainObjectAssembler;
 
     @GetMapping
-    public List<EstadoDto> listar() {
-        return estadoDtoAssembler.toDtoList(estadoRepository.findAll());
+    public CollectionModel<EstadoDto> listar() {
+        return estadoDtoAssembler.toCollectionModel(
+                estadoRepository.findAll());
     }
 
     @GetMapping("/{id}")
     public EstadoDto buscar(@PathVariable Long id) {
         Estado estado = cadastroEstadoService.verificarSeExiste(id);
 
-        return estadoDtoAssembler.toDto(estado);
+        return estadoDtoAssembler.toModel(estado);
     }
 
     @PostMapping
@@ -48,7 +49,7 @@ public class EstadoController implements EstadoControllerOpenApi {
         try {
             Estado estado = estadoDomainObjectAssembler.toDomainObject(estadoInput);
 
-            return estadoDtoAssembler.toDto(cadastroEstadoService.salvar(estado));
+            return estadoDtoAssembler.toModel(cadastroEstadoService.salvar(estado));
         } catch (EstadoNaoEncontradoException e) {
             throw new NegocioException(e.getMessage(), e);
         }

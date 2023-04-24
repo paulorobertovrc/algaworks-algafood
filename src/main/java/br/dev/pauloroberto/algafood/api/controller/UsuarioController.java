@@ -12,12 +12,12 @@ import br.dev.pauloroberto.algafood.domain.exception.UsuarioNaoEncontradoExcepti
 import br.dev.pauloroberto.algafood.domain.model.Usuario;
 import br.dev.pauloroberto.algafood.domain.service.CadastroUsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "/usuarios", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -30,13 +30,15 @@ public class UsuarioController implements UsuarioControllerOpenApi {
     private UsuarioDomainObjectAssembler usuarioDomainObjectAssembler;
 
     @GetMapping
-    public List<UsuarioDto> listar() {
-        return usuarioDtoAssembler.toDtoList(cadastroUsuarioService.listar());
+    public CollectionModel<UsuarioDto> listar() {
+        return usuarioDtoAssembler.toCollectionModel(
+                cadastroUsuarioService.listar());
     }
 
     @GetMapping("/{id}")
     public UsuarioDto buscar(@PathVariable Long id) {
-        return usuarioDtoAssembler.toDto(cadastroUsuarioService.verificarSeExiste(id));
+        return usuarioDtoAssembler.toModel(
+                cadastroUsuarioService.verificarSeExiste(id));
     }
 
     @PostMapping
@@ -44,7 +46,7 @@ public class UsuarioController implements UsuarioControllerOpenApi {
     public UsuarioDto adicionar(@RequestBody @Valid UsuarioComSenhaInputDto usuarioInput) {
         Usuario usuario = usuarioDomainObjectAssembler.toDomainObject(usuarioInput);
 
-        return usuarioDtoAssembler.toDto(cadastroUsuarioService.salvar(usuario));
+        return usuarioDtoAssembler.toModel(cadastroUsuarioService.salvar(usuario));
     }
 
     @PutMapping("/{id}")
@@ -54,7 +56,7 @@ public class UsuarioController implements UsuarioControllerOpenApi {
             Usuario usuario = cadastroUsuarioService.verificarSeExiste(id);
             usuarioDomainObjectAssembler.copyToDomainObject(usuarioInput, usuario);
 
-            return usuarioDtoAssembler.toDto(cadastroUsuarioService.salvar(usuario));
+            return usuarioDtoAssembler.toModel(cadastroUsuarioService.salvar(usuario));
         } catch (UsuarioNaoEncontradoException e) {
             throw new NegocioException(e.getMessage());
         }
