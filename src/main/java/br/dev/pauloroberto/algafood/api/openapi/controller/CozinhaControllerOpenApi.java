@@ -10,17 +10,16 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-
-import java.util.List;
 
 @Api(tags = "Cozinhas")
 public interface CozinhaControllerOpenApi {
     @ApiOperation("Lista as cozinhas")
-    Page<CozinhaDto> listar(Pageable pageable);
+    PagedModel<CozinhaDto> listar(Pageable pageable);
 
     @ApiOperation("Busca uma cozinha por ID")
     @ApiResponses({
@@ -46,8 +45,8 @@ public interface CozinhaControllerOpenApi {
                     schema = @Schema(implementation = Problem.class)
             ))
     })
-    ResponseEntity<List<CozinhaDto>> buscarTodasPorNome(@ApiParam(value = "Nome de uma cozinha", example = "Brasileira",
-            required = true) String nome);
+    ResponseEntity<CollectionModel<CozinhaDto>> buscarTodasPorNome(@ApiParam(value = "Nome de uma cozinha",
+            example = "Brasileira", required = true) String nome);
 
     @ApiOperation("Busca uma cozinha por nome exato")
     @ApiResponses({

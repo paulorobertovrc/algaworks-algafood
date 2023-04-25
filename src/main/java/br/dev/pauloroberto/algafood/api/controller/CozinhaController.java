@@ -10,15 +10,16 @@ import br.dev.pauloroberto.algafood.domain.repository.CozinhaRepository;
 import br.dev.pauloroberto.algafood.domain.service.CadastroCozinhaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -32,34 +33,40 @@ public class CozinhaController implements CozinhaControllerOpenApi {
     private CozinhaDtoAssembler cozinhaDtoAssembler;
     @Autowired
     private CozinhaDomainObjectAssembler cozinhaDomainObjectAssembler;
+    @Autowired
+    private PagedResourcesAssembler<Cozinha> pagedResourcesAssembler;
 
     @GetMapping
-    public Page<CozinhaDto> listar(Pageable pageable) {
+    public PagedModel<CozinhaDto> listar(Pageable pageable) {
         Page<Cozinha> cozinhasPage = cozinhaRepository.findAll(pageable);
-        List<CozinhaDto> cozinhasDto = cozinhaDtoAssembler.toDtoList(cozinhasPage.getContent());
 
-        return new PageImpl<>(cozinhasDto, pageable, cozinhasPage.getTotalElements());
+        return pagedResourcesAssembler.toModel(cozinhasPage, cozinhaDtoAssembler);
     }
 
     @GetMapping("/{id}")
     public CozinhaDto buscar(@PathVariable Long id) {
         Cozinha cozinha = cadastroCozinhaService.verificarSeExiste(id);
 
-        return cozinhaDtoAssembler.toDto(cozinha);
+        return cozinhaDtoAssembler.toModel(cozinha);
     }
 
     @GetMapping("/por-nome")
-    public ResponseEntity<List<CozinhaDto>> buscarTodasPorNome(@RequestParam String nome) {
-        List<CozinhaDto> cozinhas = cozinhaDtoAssembler.toDtoList(cozinhaRepository.findTodasByNomeContaining(nome));
+    public ResponseEntity<CollectionModel<CozinhaDto>> buscarTodasPorNome(@RequestParam String nome) {
+        CollectionModel<CozinhaDto> cozinhas = cozinhaDtoAssembler.toCollectionModel(
+                cozinhaRepository.findTodasByNomeContaining(nome));
 
-        return cozinhas.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(cozinhas);
+        if (cozinhas.iterator().hasNext()) {
+            return ResponseEntity.ok(cozinhas);
+        }
+
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/por-nome-exato")
     public ResponseEntity<CozinhaDto> buscarPorNomeExato(@RequestParam String nome) {
         Optional<Cozinha> cozinha = cozinhaRepository.findByNome(nome);
 
-        return cozinha.map(cozinhaEncontrada -> ResponseEntity.ok(cozinhaDtoAssembler.toDto(cozinhaEncontrada)))
+        return cozinha.map(cozinhaEncontrada -> ResponseEntity.ok(cozinhaDtoAssembler.toModel(cozinhaEncontrada)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
 
     }
@@ -74,7 +81,7 @@ public class CozinhaController implements CozinhaControllerOpenApi {
     public CozinhaDto adicionar(@RequestBody @Valid CozinhaInputDto cozinhaInput) {
         Cozinha cozinha = cozinhaDomainObjectAssembler.toDomainObject(cozinhaInput);
 
-        return cozinhaDtoAssembler.toDto(cadastroCozinhaService.salvar(cozinha));
+        return cozinhaDtoAssembler.toModel(cadastroCozinhaService.salvar(cozinha));
     }
 
     @PutMapping("/{id}")
@@ -84,7 +91,7 @@ public class CozinhaController implements CozinhaControllerOpenApi {
 
         cozinhaDomainObjectAssembler.copyToDomainObject(cozinhaInput, cozinha);
 
-        return cozinhaDtoAssembler.toDto(cadastroCozinhaService.salvar(cozinha));
+        return cozinhaDtoAssembler.toModel(cadastroCozinhaService.salvar(cozinha));
     }
 
     @DeleteMapping("/{id}")
