@@ -7,6 +7,7 @@ import br.dev.pauloroberto.algafood.api.model.PedidoDto;
 import br.dev.pauloroberto.algafood.api.model.PedidoResumoDto;
 import br.dev.pauloroberto.algafood.api.model.input.PedidoInputDto;
 import br.dev.pauloroberto.algafood.api.openapi.controller.PedidoControllerOpenApi;
+import br.dev.pauloroberto.algafood.core.data.PageWrapper;
 import br.dev.pauloroberto.algafood.core.data.PageableTranslator;
 import br.dev.pauloroberto.algafood.domain.filter.PedidoFilter;
 import br.dev.pauloroberto.algafood.domain.model.Pedido;
@@ -63,9 +64,10 @@ public class PedidoController implements PedidoControllerOpenApi {
     @Override
     @GetMapping
     public PagedModel<PedidoResumoDto> pesquisar(PedidoFilter filtro, Pageable pageable) {
-        pageable = traduzirPageable(pageable);
+        Pageable pageableTraduzido = traduzirPageable(pageable);
 
-        Page<Pedido> pedidosPage = emissaoPedidoService.listar(PedidoSpecs.usandoFiltro(filtro), pageable);
+        Page<Pedido> pedidosPage = emissaoPedidoService.listar(PedidoSpecs.usandoFiltro(filtro), pageableTraduzido);
+        pedidosPage = new PageWrapper<>(pedidosPage, pageable);
 
         return pagedResourcesAssembler.toModel(pedidosPage, pedidoResumoDtoAssembler);
     }
