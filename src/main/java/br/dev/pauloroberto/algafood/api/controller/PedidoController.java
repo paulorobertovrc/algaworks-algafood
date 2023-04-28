@@ -15,14 +15,14 @@ import br.dev.pauloroberto.algafood.domain.service.EmissaoPedidoService;
 import br.dev.pauloroberto.algafood.infrastructure.repository.spec.PedidoSpecs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -36,6 +36,8 @@ public class PedidoController implements PedidoControllerOpenApi {
     private PedidoResumoDtoAssembler pedidoResumoDtoAssembler;
     @Autowired
     private PedidoDomainObjectAssembler pedidoDomainObjectAssembler;
+    @Autowired
+    private PagedResourcesAssembler<Pedido> pagedResourcesAssembler;
 
 //    @GetMapping
 //    public MappingJacksonValue pesquisar(@RequestParam(required = false) String campos) {
@@ -58,21 +60,21 @@ public class PedidoController implements PedidoControllerOpenApi {
 //        return pedidosWrapper;
 //    }
 
+    @Override
     @GetMapping
-    public Page<PedidoResumoDto> pesquisar(PedidoFilter filtro, Pageable pageable) {
+    public PagedModel<PedidoResumoDto> pesquisar(PedidoFilter filtro, Pageable pageable) {
         pageable = traduzirPageable(pageable);
 
         Page<Pedido> pedidosPage = emissaoPedidoService.listar(PedidoSpecs.usandoFiltro(filtro), pageable);
-        List<PedidoResumoDto> pedidosResumoDto = pedidoResumoDtoAssembler.toDtoList(pedidosPage.getContent());
 
-        return new PageImpl<>(pedidosResumoDto, pageable, pedidosPage.getTotalElements());
+        return pagedResourcesAssembler.toModel(pedidosPage, pedidoResumoDtoAssembler);
     }
 
     @GetMapping("/{codigoPedido}")
     public PedidoDto buscar(@PathVariable String codigoPedido) {
         Pedido pedido = emissaoPedidoService.verificarSeExiste(codigoPedido);
 
-        return pedidoDtoAssembler.toDto(pedido);
+        return pedidoDtoAssembler.toModel(pedido);
     }
 
     @PostMapping
@@ -86,7 +88,7 @@ public class PedidoController implements PedidoControllerOpenApi {
 
         emissaoPedidoService.emitir(pedido);
 
-        return pedidoDtoAssembler.toDto(pedido);
+        return pedidoDtoAssembler.toModel(pedido);
     }
 
     private Pageable traduzirPageable(Pageable apiPageable) {

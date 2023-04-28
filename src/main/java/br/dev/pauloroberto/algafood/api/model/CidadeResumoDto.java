@@ -3,10 +3,13 @@ package br.dev.pauloroberto.algafood.api.model;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 @Setter
 @Getter
-public class CidadeResumoDto {
+@Relation(collectionRelation = "cidades")
+public class CidadeResumoDto extends RepresentationModel<CidadeResumoDto> {
 
     // Esta classe é uma representação simplificada de Cidade, apenas com os atributos que serão exibidos na resposta da API.
     // Deve ser utilizada na classe EstadoDto, sendo que nesse caso o atributo cidade deve ser do tipo CidadeResumoDto.
