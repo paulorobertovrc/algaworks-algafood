@@ -6,6 +6,11 @@ import br.dev.pauloroberto.algafood.domain.model.Pedido;
 import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.TemplateVariable;
+import org.springframework.hateoas.TemplateVariable.VariableType;
+import org.springframework.hateoas.TemplateVariables;
+import org.springframework.hateoas.UriTemplate;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
@@ -25,9 +30,23 @@ public class PedidoDtoAssembler extends RepresentationModelAssemblerSupport<Pedi
     public @NotNull PedidoDto toModel(@NotNull Pedido pedido) {
         PedidoDto pedidoDto = modelMapper.map(pedido, PedidoDto.class);
 
+        TemplateVariables pageVariables = new TemplateVariables(
+                new TemplateVariable("page", VariableType.REQUEST_PARAM),
+                new TemplateVariable("size", VariableType.REQUEST_PARAM),
+                new TemplateVariable("sort", VariableType.REQUEST_PARAM));
+
+        TemplateVariables filterVariables = new TemplateVariables(
+                new TemplateVariable("clienteId", VariableType.REQUEST_PARAM),
+                new TemplateVariable("restauranteId", VariableType.REQUEST_PARAM),
+                new TemplateVariable("dataCriacaoInicio", VariableType.REQUEST_PARAM),
+                new TemplateVariable("dataCriacaoFim", VariableType.REQUEST_PARAM));
+
         pedidoDto.add(linkTo(methodOn(PedidoController.class)
                 .buscar(pedidoDto.getCodigo())).withSelfRel());
-        pedidoDto.add(linkTo(PedidoController.class).withRel("pedidos"));
+
+        pedidoDto.add(Link.of(UriTemplate.of(String.valueOf(linkTo(PedidoController.class).toUri()),
+                pageVariables.concat(filterVariables)), "pedidos"));
+
         pedidoDto.getRestaurante().add(linkTo(methodOn(RestauranteController.class)
                 .buscar(pedidoDto.getRestaurante().getId())).withSelfRel());
         pedidoDto.getCliente().add(linkTo(methodOn(UsuarioController.class)
