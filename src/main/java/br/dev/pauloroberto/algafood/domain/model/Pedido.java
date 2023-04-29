@@ -89,7 +89,7 @@ public class Pedido extends AbstractAggregateRoot<Pedido> {
     }
 
     private void setStatus(StatusPedido novoStatus) {
-        if (getStatus().naoPodeAlterarPara(novoStatus)) {
+        if (getStatus().naoPodeSerAlteradoPara(novoStatus)) {
             throw new NegocioException(String.format("Status do pedido %s não pode ser alterado de %s para %s",
                     getCodigo(), getStatus().getDescricao(), novoStatus.getDescricao()));
         }
@@ -100,6 +100,18 @@ public class Pedido extends AbstractAggregateRoot<Pedido> {
     @PrePersist // Método de callback do JPA que será executado antes de persistir o objeto no banco de dados
     private void gerarCodigo() {
         setCodigo(UUID.randomUUID().toString());
+    }
+
+    public boolean podeSerConfirmado() {
+        return getStatus().podeSerAlteradoPara(StatusPedido.CONFIRMADO);
+    }
+
+    public boolean podeSerEntregue() {
+        return getStatus().podeSerAlteradoPara(StatusPedido.ENTREGUE);
+    }
+
+    public boolean podeSerCancelado() {
+        return getStatus().podeSerAlteradoPara(StatusPedido.CANCELADO);
     }
 
 }

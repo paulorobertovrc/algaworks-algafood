@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 @Api(tags = "Pedidos")
 public interface FluxoPedidoControllerOpenApi {
@@ -20,7 +21,7 @@ public interface FluxoPedidoControllerOpenApi {
                     schema = @Schema(implementation = Problem.class)
             ))
     })
-    void confirmar(@ApiParam(value = "Código do pedido", example = "f5a8c2d5-7b8a-4f3e-9c3a-7c5b5d1f2c3d",
+    ResponseEntity<Void> confirmar(@ApiParam(value = "Código do pedido", example = "f5a8c2d5-7b8a-4f3e-9c3a-7c5b5d1f2c3d",
             required = true) String codigoPedido);
 
     @ApiModelProperty("Entrega de pedido")
@@ -31,7 +32,7 @@ public interface FluxoPedidoControllerOpenApi {
                     schema = @Schema(implementation = Problem.class)
             ))
     })
-    void entregar(@ApiParam(value = "Código do pedido", example = "f5a8c2d5-7b8a-4f3e-9c3a-7c5b5d1f2c3d",
+    ResponseEntity<Void> entregar(@ApiParam(value = "Código do pedido", example = "f5a8c2d5-7b8a-4f3e-9c3a-7c5b5d1f2c3d",
             required = true) String codigoPedido);
 
     @ApiModelProperty("Cancelamento de pedido")
@@ -42,6 +43,6 @@ public interface FluxoPedidoControllerOpenApi {
                     schema = @Schema(implementation = Problem.class)
             ))
     })
-    void cancelar(@ApiParam(value = "Código do pedido", example = "f5a8c2d5-7b8a-4f3e-9c3a-7c5b5d1f2c3d",
+    ResponseEntity<Void> cancelar(@ApiParam(value = "Código do pedido", example = "f5a8c2d5-7b8a-4f3e-9c3a-7c5b5d1f2c3d",
             required = true) String codigoPedido);
 }

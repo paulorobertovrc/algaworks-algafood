@@ -32,8 +32,21 @@ public class PedidoDtoAssembler extends RepresentationModelAssemblerSupport<Pedi
         pedidoDto.getFormaPagamento().add(linkHelper.linkToFormasPagamento(pedido.getFormaPagamento().getId()));
         pedidoDto.getEnderecoEntrega().getCidade().add(
                 linkHelper.linkToCidade(pedido.getEnderecoEntrega().getCidade().getId()));
+
         pedidoDto.getItens().forEach(item -> item.add(
                 linkHelper.linkToProduto(pedidoDto.getRestaurante().getId(), item.getProdutoId(), "produto")));
+
+        if (pedido.podeSerConfirmado()) {
+            pedidoDto.add(linkHelper.linkToConfirmacaoPedido(pedidoDto.getCodigo(), "confirmar"));
+        }
+
+        if (pedido.podeSerCancelado()) {
+            pedidoDto.add(linkHelper.linkToCancelamentoPedido(pedidoDto.getCodigo(), "cancelar"));
+        }
+
+        if (pedido.podeSerEntregue()) {
+            pedidoDto.add(linkHelper.linkToEntregaPedido(pedidoDto.getCodigo(), "entregar"));
+        }
 
         return pedidoDto;
     }
