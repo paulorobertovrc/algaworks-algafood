@@ -1,7 +1,7 @@
 package br.dev.pauloroberto.algafood.api.assembler;
 
 import br.dev.pauloroberto.algafood.api.controller.CidadeController;
-import br.dev.pauloroberto.algafood.api.controller.EstadoController;
+import br.dev.pauloroberto.algafood.api.helper.LinkHelper;
 import br.dev.pauloroberto.algafood.api.model.CidadeDto;
 import br.dev.pauloroberto.algafood.domain.model.Cidade;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +18,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class CidadeDtoAssembler extends RepresentationModelAssemblerSupport<Cidade, CidadeDto> {
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private LinkHelper linkHelper;
 
     public CidadeDtoAssembler() {
         super(CidadeController.class, CidadeDto.class);
@@ -27,10 +29,9 @@ public class CidadeDtoAssembler extends RepresentationModelAssemblerSupport<Cida
     public @NotNull CidadeDto toModel(@NotNull Cidade cidade) {
         CidadeDto cidadeDto = modelMapper.map(cidade, CidadeDto.class);
 
-        cidadeDto.add(linkTo(methodOn(CidadeController.class).buscar(cidadeDto.getId())).withSelfRel());
-        cidadeDto.add(linkTo(methodOn(CidadeController.class).listar()).withRel("cidades"));
-        cidadeDto.getEstado().add(linkTo(methodOn(EstadoController.class).buscar(cidadeDto.getEstado().getId()))
-                .withSelfRel());
+        cidadeDto.add(linkHelper.linkToCidade(cidadeDto.getId()));
+        cidadeDto.add(linkHelper.linkToCidades("cidades"));
+        cidadeDto.getEstado().add(linkHelper.linkToEstado(cidadeDto.getEstado().getId()));
 
         return cidadeDto;
     }

@@ -1,7 +1,7 @@
 package br.dev.pauloroberto.algafood.api.assembler;
 
 import br.dev.pauloroberto.algafood.api.controller.UsuarioController;
-import br.dev.pauloroberto.algafood.api.controller.UsuarioGrupoController;
+import br.dev.pauloroberto.algafood.api.helper.LinkHelper;
 import br.dev.pauloroberto.algafood.api.model.UsuarioDto;
 import br.dev.pauloroberto.algafood.domain.model.Usuario;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +18,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class UsuarioDtoAssembler extends RepresentationModelAssemblerSupport<Usuario, UsuarioDto> {
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private LinkHelper linkHelper;
 
     public UsuarioDtoAssembler() {
         super(UsuarioController.class, UsuarioDto.class);
@@ -27,10 +29,9 @@ public class UsuarioDtoAssembler extends RepresentationModelAssemblerSupport<Usu
     public @NotNull UsuarioDto toModel(@NotNull Usuario usuario) {
         UsuarioDto usuarioDto = modelMapper.map(usuario, UsuarioDto.class);
 
-        usuarioDto.add(linkTo(methodOn(UsuarioController.class).buscar(usuarioDto.getId())).withSelfRel());
-        usuarioDto.add(linkTo(methodOn(UsuarioController.class).listar()).withRel("usuarios"));
-        usuarioDto.add(linkTo(methodOn(UsuarioGrupoController.class).listar(usuarioDto.getId()))
-                .withRel("grupos-usuario"));
+        usuarioDto.add(linkHelper.linkToUsuario(usuarioDto.getId()));
+        usuarioDto.add(linkHelper.linkToUsuarios("usuarios"));
+        usuarioDto.add(linkHelper.linkToGruposUsuario(usuarioDto.getId(), "grupos-usuario"));
 
         return usuarioDto;
     }

@@ -1,6 +1,7 @@
 package br.dev.pauloroberto.algafood.api.assembler;
 
 import br.dev.pauloroberto.algafood.api.controller.CozinhaController;
+import br.dev.pauloroberto.algafood.api.helper.LinkHelper;
 import br.dev.pauloroberto.algafood.api.model.CozinhaDto;
 import br.dev.pauloroberto.algafood.domain.model.Cozinha;
 import org.jetbrains.annotations.NotNull;
@@ -11,12 +12,13 @@ import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSuppor
 import org.springframework.stereotype.Component;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 public class CozinhaDtoAssembler extends RepresentationModelAssemblerSupport<Cozinha, CozinhaDto> {
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private LinkHelper linkHelper;
 
     public CozinhaDtoAssembler() {
         super(CozinhaController.class, CozinhaDto.class);
@@ -26,9 +28,8 @@ public class CozinhaDtoAssembler extends RepresentationModelAssemblerSupport<Coz
     public @NotNull CozinhaDto toModel(@NotNull Cozinha cozinha) {
         CozinhaDto cozinhaDto = modelMapper.map(cozinha, CozinhaDto.class);
 
-        cozinhaDto.add(linkTo(methodOn(CozinhaController.class).buscar(cozinhaDto.getId())).withSelfRel());
-        cozinhaDto.add(linkTo(CozinhaController.class).withRel("cozinhas"));
-//        cozinhaDto.add(linkTo(methodOn(CozinhaController.class).listar()).withRel("cozinhas"));
+        cozinhaDto.add(linkHelper.linkToCozinha(cozinhaDto.getId()));
+        cozinhaDto.add(linkHelper.linkToCozinhas("cozinhas"));
 
         return cozinhaDto;
     }

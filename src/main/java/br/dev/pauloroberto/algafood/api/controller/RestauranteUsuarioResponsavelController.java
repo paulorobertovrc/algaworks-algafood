@@ -1,6 +1,7 @@
 package br.dev.pauloroberto.algafood.api.controller;
 
 import br.dev.pauloroberto.algafood.api.assembler.UsuarioDtoAssembler;
+import br.dev.pauloroberto.algafood.api.helper.LinkHelper;
 import br.dev.pauloroberto.algafood.api.model.UsuarioDto;
 import br.dev.pauloroberto.algafood.api.openapi.controller.RestauranteUsuarioResponsavelControllerOpenApi;
 import br.dev.pauloroberto.algafood.domain.model.Restaurante;
@@ -11,9 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 @RestController
 @RequestMapping(path = "/restaurantes/{restauranteId}/responsaveis", produces = MediaType.APPLICATION_JSON_VALUE)
 //@ApiIgnore // Não é necessária após a criação do RestauranteUsuarioResponsavelControllerOpenApi
@@ -22,6 +20,8 @@ public class RestauranteUsuarioResponsavelController implements RestauranteUsuar
     private CadastroRestauranteService cadastroRestauranteService;
     @Autowired
     private UsuarioDtoAssembler usuarioDtoAssembler;
+    @Autowired
+    private LinkHelper linkHelper;
 
     @GetMapping
     public CollectionModel<UsuarioDto> listar(@PathVariable Long restauranteId) {
@@ -29,8 +29,7 @@ public class RestauranteUsuarioResponsavelController implements RestauranteUsuar
 
         return usuarioDtoAssembler.toCollectionModel(restaurante.getResponsaveis())
                 .removeLinks()
-                .add(linkTo(methodOn(RestauranteUsuarioResponsavelController.class)
-                        .listar(restauranteId)).withSelfRel());
+                .add(linkHelper.linkToResponsaveisRestaurante(restauranteId));
     }
 
     @PutMapping("/{usuarioId}")
