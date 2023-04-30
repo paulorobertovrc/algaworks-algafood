@@ -11,9 +11,6 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 @Component
 public class CidadeDtoAssembler extends RepresentationModelAssemblerSupport<Cidade, CidadeDto> {
     @Autowired
@@ -39,7 +36,7 @@ public class CidadeDtoAssembler extends RepresentationModelAssemblerSupport<Cida
     @Override
     public @NotNull CollectionModel<CidadeDto> toCollectionModel(@NotNull Iterable<? extends Cidade> entities) {
         return super.toCollectionModel(entities)
-                .add(linkTo(methodOn(CidadeController.class).listar()).withSelfRel());
+                .add(linkHelper.linkToCidades());
     }
 
 }

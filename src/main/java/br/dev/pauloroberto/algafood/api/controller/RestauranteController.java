@@ -1,10 +1,12 @@
 package br.dev.pauloroberto.algafood.api.controller;
 
+import br.dev.pauloroberto.algafood.api.assembler.RestauranteApenasNomeDtoAssembler;
+import br.dev.pauloroberto.algafood.api.assembler.RestauranteBasicoDtoAssembler;
 import br.dev.pauloroberto.algafood.api.assembler.RestauranteDomainObjectAssembler;
 import br.dev.pauloroberto.algafood.api.assembler.RestauranteDtoAssembler;
+import br.dev.pauloroberto.algafood.api.model.RestauranteApenasNomeDto;
 import br.dev.pauloroberto.algafood.api.model.RestauranteDto;
 import br.dev.pauloroberto.algafood.api.model.input.RestauranteInputDto;
-import br.dev.pauloroberto.algafood.api.model.view.RestauranteView;
 import br.dev.pauloroberto.algafood.api.openapi.controller.RestauranteControllerOpenApi;
 import br.dev.pauloroberto.algafood.domain.exception.CidadeNaoEncontradaException;
 import br.dev.pauloroberto.algafood.domain.exception.CozinhaNaoEncontradaException;
@@ -16,11 +18,13 @@ import br.dev.pauloroberto.algafood.domain.service.CadastroRestauranteService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +49,10 @@ public class RestauranteController implements RestauranteControllerOpenApi {
     private RestauranteDtoAssembler restauranteDtoAssembler;
     @Autowired
     private RestauranteDomainObjectAssembler restauranteDomainObjectAssembler;
+    @Autowired
+    private RestauranteBasicoDtoAssembler restauranteBasicoDtoAssembler;
+    @Autowired
+    private RestauranteApenasNomeDtoAssembler restauranteApenasNomeDtoAssembler;
 
 //    @GetMapping
 //    public List<RestauranteDto> pesquisar() {
@@ -57,46 +65,42 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 //        return restauranteDtoAssembler.toDtoList(restauranteRepository.findAll());
 //    }
 
+    @Override
     @GetMapping
-    public MappingJacksonValue listar(@RequestParam(required = false) String projecao) {
-        List<Restaurante> restaurantes = restauranteRepository.findAll();
-        List<RestauranteDto> restaurantesDto = restauranteDtoAssembler.toDtoList(restaurantes);
+    public CollectionModel<RestauranteDto> listar() {
+        return restauranteDtoAssembler.toCollectionModel(restauranteRepository.findAll());
+    }
 
-        MappingJacksonValue restaurantesWrapper = new MappingJacksonValue(restaurantesDto);
-
-        restaurantesWrapper.setSerializationView(RestauranteView.Resumo.class);
-
-        if ("apenas-nome".equals(projecao)) {
-            restaurantesWrapper.setSerializationView(RestauranteView.ApenasNome.class);
-        } else if ("completo".equals(projecao)) {
-            restaurantesWrapper.setSerializationView(null);
-        }
-
-        return restaurantesWrapper;
+    @Override
+    @GetMapping(params = "projecao=apenas-nome")
+    public CollectionModel<RestauranteApenasNomeDto> listarApenasNomes() {
+        return restauranteApenasNomeDtoAssembler.toCollectionModel(restauranteRepository.findAll());
     }
 
     @GetMapping("/{id}")
     public RestauranteDto buscar(@PathVariable Long id) {
         Restaurante restaurante = cadastroRestauranteService.verificarSeExiste(id);
 
-        return restauranteDtoAssembler.toDto(restaurante);
+        return restauranteDtoAssembler.toModel(restaurante);
     }
 
     @GetMapping("/por-taxa-frete")
-    public List<RestauranteDto> buscarPorTaxaFrete(@RequestParam BigDecimal taxaInicial,
-                                                   @RequestParam BigDecimal taxaFinal) {
-        return restauranteDtoAssembler.toDtoList(restauranteRepository.findByTaxaFreteBetween(taxaInicial, taxaFinal));
+    public CollectionModel<RestauranteDto> buscarPorTaxaFrete(@RequestParam BigDecimal taxaInicial,
+                                                              @RequestParam BigDecimal taxaFinal) {
+        return restauranteDtoAssembler.toCollectionModel(
+                restauranteRepository.findByTaxaFreteBetween(taxaInicial, taxaFinal));
     }
 
     @GetMapping("/por-nome")
-    public List<RestauranteDto> buscarPorNome(@RequestParam String nome,
-                                              Long cozinhaId) {
-        return restauranteDtoAssembler.toDtoList(restauranteRepository.consultarPorNome(nome, cozinhaId));
+    public @NotNull CollectionModel<RestauranteDto> buscarPorNome(@RequestParam String nome,
+                                                                  Long cozinhaId) {
+        return restauranteDtoAssembler.toCollectionModel(restauranteRepository.consultarPorNome(nome, cozinhaId));
     }
 
     @GetMapping("/primeiro-por-nome")
     public Optional<RestauranteDto> buscarPrimeiroPorNome(@RequestParam String nome) {
-        return Optional.of(restauranteDtoAssembler.toDto(restauranteRepository.findFirstRestauranteByNomeContaining(nome)
+        return Optional.of(
+                restauranteDtoAssembler.toModel(restauranteRepository.findFirstRestauranteByNomeContaining(nome)
                 .orElseThrow(() -> new RestauranteNaoEncontradoException(
                         String.format("Não existe um restaurante com o nome %s", nome)
                 )))
@@ -104,8 +108,8 @@ public class RestauranteController implements RestauranteControllerOpenApi {
     }
 
     @GetMapping("/top2-por-nome")
-    public List<RestauranteDto> buscarTop2PorNome(@RequestParam String nome) {
-        return restauranteDtoAssembler.toDtoList(restauranteRepository.findTop2ByNomeContaining(nome));
+    public @NotNull CollectionModel<RestauranteDto> buscarTop2PorNome(@RequestParam String nome) {
+        return restauranteDtoAssembler.toCollectionModel(restauranteRepository.findTop2ByNomeContaining(nome));
     }
 
     @GetMapping("/contagem-por-cozinha")
@@ -114,20 +118,22 @@ public class RestauranteController implements RestauranteControllerOpenApi {
     }
 
     @GetMapping("/busca-customizada")
-    public List<RestauranteDto> buscarCustomizada(String nome,
-                                               BigDecimal taxaFreteInicial,
-                                               BigDecimal taxaFreteFinal) {
-        return restauranteDtoAssembler.toDtoList(restauranteRepository.buscaCustomizada(nome, taxaFreteInicial, taxaFreteFinal));
+    public @NotNull CollectionModel<RestauranteDto> buscarCustomizada(String nome,
+                                                                      BigDecimal taxaFreteInicial,
+                                                                      BigDecimal taxaFreteFinal) {
+        return restauranteDtoAssembler.toCollectionModel(
+                restauranteRepository.buscaCustomizada(nome, taxaFreteInicial, taxaFreteFinal));
     }
 
     @GetMapping("/com-frete-gratis")
-    public List<RestauranteDto> restaurantesComFreteGratis(@RequestParam(required = false) String nome) {
-        return restauranteDtoAssembler.toDtoList(restauranteRepository.findComFreteGratis(nome));
+    public @NotNull CollectionModel<RestauranteDto> restaurantesComFreteGratis(
+            @RequestParam(required = false) String nome) {
+        return restauranteDtoAssembler.toCollectionModel(restauranteRepository.findComFreteGratis(nome));
     }
 
     @GetMapping("/primeiro")
     public Optional<RestauranteDto> buscarPrimeiro() {
-        return Optional.of(restauranteDtoAssembler.toDto(restauranteRepository.buscarPrimeiro()
+        return Optional.of(restauranteDtoAssembler.toModel(restauranteRepository.buscarPrimeiro()
                 .orElseThrow(() -> new RestauranteNaoEncontradoException("Não existe um restaurante cadastrado"))
         ));
     }
@@ -138,7 +144,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
         try {
             Restaurante restaurante = restauranteDomainObjectAssembler.toDomainObject(restauranteInput);
 
-            return restauranteDtoAssembler.toDto(cadastroRestauranteService.salvar(restaurante));
+            return restauranteDtoAssembler.toModel(cadastroRestauranteService.salvar(restaurante));
         } catch (CozinhaNaoEncontradaException | CidadeNaoEncontradaException e) {
             throw new NegocioException(e.getMessage());
         }
@@ -152,7 +158,7 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 
             restauranteDomainObjectAssembler.copyToDomainObject(restauranteInput, restauranteAtual);
 
-            return restauranteDtoAssembler.toDto(cadastroRestauranteService.salvar(restauranteAtual));
+            return restauranteDtoAssembler.toModel(cadastroRestauranteService.salvar(restauranteAtual));
         } catch (CozinhaNaoEncontradaException | CidadeNaoEncontradaException e) {
             throw new NegocioException(e.getMessage());
         }
@@ -160,8 +166,18 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 
     @PutMapping("/{id}/ativo")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void ativar(@PathVariable Long id) {
+    public ResponseEntity<Void> ativar(@PathVariable Long id) {
         cadastroRestauranteService.ativar(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}/ativo")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<Void> inativar(@PathVariable Long id) {
+        cadastroRestauranteService.inativar(id);
+
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/ativacoes")
@@ -186,20 +202,18 @@ public class RestauranteController implements RestauranteControllerOpenApi {
 
     @PutMapping("/{id}/abertura")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void abrir(@PathVariable Long id) {
+    public ResponseEntity<Void> abrir(@PathVariable Long id) {
         cadastroRestauranteService.abrir(id);
+
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}/fechamento")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void fechar(@PathVariable Long id) {
+    public ResponseEntity<Void> fechar(@PathVariable Long id) {
         cadastroRestauranteService.fechar(id);
-    }
 
-    @DeleteMapping("/{id}/ativo")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void inativar(@PathVariable Long id) {
-        cadastroRestauranteService.inativar(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}")

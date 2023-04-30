@@ -1,6 +1,7 @@
 package br.dev.pauloroberto.algafood.api.openapi.controller;
 
 import br.dev.pauloroberto.algafood.api.exception.handler.Problem;
+import br.dev.pauloroberto.algafood.api.model.RestauranteApenasNomeDto;
 import br.dev.pauloroberto.algafood.api.model.RestauranteDto;
 import br.dev.pauloroberto.algafood.api.model.input.RestauranteInputDto;
 import br.dev.pauloroberto.algafood.api.openapi.model.RestauranteBasicoModelOpenApi;
@@ -12,7 +13,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.http.converter.json.MappingJacksonValue;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.http.ResponseEntity;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +29,10 @@ public interface RestauranteControllerOpenApi {
     @ApiOperation(value = "Lista restaurantes", response = RestauranteBasicoModelOpenApi.class)
     @ApiImplicitParam(name = "projecao", value = "Nome da projeção de pedidos",
             allowableValues = "apenas-nome, completo", paramType = "query", type = "string")
-    MappingJacksonValue listar(String projecao);
+    CollectionModel<RestauranteDto> listar();
+
+    @ApiOperation(value = "Lista restaurantes", hidden = true)
+    CollectionModel<RestauranteApenasNomeDto> listarApenasNomes();
 
     @ApiOperation("Busca um restaurante por ID")
     @ApiResponses({
@@ -46,7 +52,7 @@ public interface RestauranteControllerOpenApi {
                     mediaType = "application/json", schema = @Schema(implementation = Problem.class)
             ))
     })
-    List<RestauranteDto> buscarPorTaxaFrete(@ApiParam(value = "Taxa de frete inicial", example = "1.00",
+    CollectionModel<RestauranteDto> buscarPorTaxaFrete(@ApiParam(value = "Taxa de frete inicial", example = "1.00",
             required = true) BigDecimal taxaInicial, @ApiParam(value = "Taxa de frete final", example = "2.00",
             required = true) BigDecimal taxaFinal);
 
@@ -58,7 +64,8 @@ public interface RestauranteControllerOpenApi {
                     mediaType = "application/json", schema = @Schema(implementation = Problem.class)
             ))
     })
-    List<RestauranteDto> buscarPorNome(@ApiParam(value = "Nome de um restaurante", example = "Thai Gourmet",
+    @NotNull
+    CollectionModel<RestauranteDto> buscarPorNome(@ApiParam(value = "Nome de um restaurante", example = "Thai Gourmet",
             required = true) String nome, @ApiParam(value = "ID de uma cozinha", example = "1", required = true)
     Long cozinhaId);
 
@@ -73,7 +80,8 @@ public interface RestauranteControllerOpenApi {
     @ApiResponse(responseCode = "404", description = "Restaurante não encontrado", content = @Content(
             mediaType = "application/json", schema = @Schema(implementation = Problem.class)
     ))
-    List<RestauranteDto> buscarTop2PorNome(@ApiParam(value = "Nome de um restaurante", example = "Thai Gourmet",
+    @NotNull
+    CollectionModel<RestauranteDto> buscarTop2PorNome(@ApiParam(value = "Nome de um restaurante", example = "Thai Gourmet",
             required = true) String nome);
 
     @ApiOperation("Retorna a contagem de restaurantes por cozinha")
@@ -95,7 +103,8 @@ public interface RestauranteControllerOpenApi {
                     mediaType = "application/json", schema = @Schema(implementation = Problem.class)
             ))
     })
-    List<RestauranteDto> buscarCustomizada(@ApiParam(value = "Nome de um restaurante", example = "Thai Gourmet")
+    @NotNull
+    CollectionModel<RestauranteDto> buscarCustomizada(@ApiParam(value = "Nome de um restaurante", example = "Thai Gourmet")
                                            String nome, @ApiParam(value = "Taxa de frete inicial", example = "1.00")
         BigDecimal taxaFreteInicial, @ApiParam(value = "Taxa de frete final", example = "2.00")
         BigDecimal taxaFreteFinal);
@@ -108,7 +117,8 @@ public interface RestauranteControllerOpenApi {
                     mediaType = "application/json", schema = @Schema(implementation = Problem.class)
             ))
     })
-    List<RestauranteDto> restaurantesComFreteGratis(@ApiParam(value = "Nome de um restaurante",
+    @NotNull
+    CollectionModel<RestauranteDto> restaurantesComFreteGratis(@ApiParam(value = "Nome de um restaurante",
             example = "Thai Gourmet", required = true) String nome);
 
     @ApiOperation("Busca o primeiro restaurante")
@@ -140,7 +150,7 @@ public interface RestauranteControllerOpenApi {
                     mediaType = "application/json", schema = @Schema(implementation = Problem.class)
             ))
     })
-    void ativar(@ApiParam(value = "ID de um restaurante", example = "1", required = true) Long id);
+    ResponseEntity<Void> ativar(@ApiParam(value = "ID de um restaurante", example = "1", required = true) Long id);
 
     @ApiOperation("Ativa múltiplos restaurantes")
     @ApiResponses({
@@ -167,7 +177,7 @@ public interface RestauranteControllerOpenApi {
                     mediaType = "application/json", schema = @Schema(implementation = Problem.class)
             ))
     })
-    void abrir(@ApiParam(value = "ID de um restaurante", example = "1", required = true) Long id);
+    ResponseEntity<Void> abrir(@ApiParam(value = "ID de um restaurante", example = "1", required = true) Long id);
 
     @ApiOperation("Fecha um restaurante")
     @ApiResponses({
@@ -176,7 +186,7 @@ public interface RestauranteControllerOpenApi {
                     mediaType = "application/json", schema = @Schema(implementation = Problem.class)
             ))
     })
-    void fechar(@ApiParam(value = "ID de um restaurante", example = "1", required = true) Long id);
+    ResponseEntity<Void> fechar(@ApiParam(value = "ID de um restaurante", example = "1", required = true) Long id);
 
     @ApiOperation("Inativa um restaurante")
     @ApiResponses({
@@ -185,7 +195,7 @@ public interface RestauranteControllerOpenApi {
                     mediaType = "application/json", schema = @Schema(implementation = Problem.class)
             ))
     })
-    void inativar(@ApiParam(value = "ID de um restaurante", example = "1", required = true) Long id);
+    ResponseEntity<Void> inativar(@ApiParam(value = "ID de um restaurante", example = "1", required = true) Long id);
 
     @ApiOperation("Atualiza parcialmente um restaurante")
     @ApiResponses({

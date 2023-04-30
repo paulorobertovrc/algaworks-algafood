@@ -53,6 +53,18 @@ public class LinkHelper {
         return linkToRestaurante(restauranteId, IanaLinkRelations.SELF.value());
     }
 
+    public Link linkToRestaurantes(String rel) {
+        return linkTo(RestauranteController.class).withRel(rel);
+    }
+
+    public Link linkToRestaurantes() {
+        return linkToRestaurantes(IanaLinkRelations.SELF.value());
+    }
+
+    public Link linkToRestauranteFormasPagamento(Long restauranteId, String rel) {
+        return linkTo(methodOn(RestauranteFormaPagamentoController.class).listar(restauranteId)).withRel(rel);
+    }
+
     public Link linkToUsuario(Long usuarioId, String rel) {
         return linkTo(methodOn(UsuarioController.class).buscar(usuarioId)).withRel(rel);
     }
@@ -103,6 +115,10 @@ public class LinkHelper {
 
     public Link linkToCidades(String rel) {
         return linkTo(CidadeController.class).withRel(rel);
+    }
+
+    public Link linkToCidades() {
+        return linkToCidades(IanaLinkRelations.SELF.value());
     }
 
     public Link linkToEstado(Long estadoId, String rel) {
