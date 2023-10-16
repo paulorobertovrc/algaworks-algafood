@@ -33,6 +33,22 @@ public class RestauranteDtoAssembler extends RepresentationModelAssemblerSupport
         restauranteDto.add(linkHelper.linkToRestauranteFormasPagamento(restauranteDto.getId(), "formas-pagamento"));
         restauranteDto.add(linkHelper.linkToResponsaveisRestaurante(restauranteDto.getId(), "responsaveis"));
 
+        if (restaurante.ativacaoPermitida()) {
+            restauranteDto.add(linkHelper.linkToRestauranteAtivacao(restauranteDto.getId(), "ativar"));
+        }
+
+        if (restaurante.inativacaoPermitida()) {
+            restauranteDto.add(linkHelper.linkToRestauranteInativacao(restauranteDto.getId(), "inativar"));
+        }
+
+        if (restaurante.aberturaPermitida()) {
+            restauranteDto.add(linkHelper.linkToRestauranteAbertura(restauranteDto.getId(), "abrir"));
+        }
+
+        if (restaurante.fechamentoPermitido()) {
+            restauranteDto.add(linkHelper.linkToRestauranteFechamento(restauranteDto.getId(), "fechar"));
+        }
+
         return restauranteDto;
     }
 

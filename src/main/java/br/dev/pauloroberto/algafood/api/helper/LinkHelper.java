@@ -20,6 +20,9 @@ public class LinkHelper {
                 new TemplateVariable("dataCriacaoInicio", TemplateVariable.VariableType.REQUEST_PARAM),
                 new TemplateVariable("dataCriacaoFim", TemplateVariable.VariableType.REQUEST_PARAM));
 
+    public static final TemplateVariables PROJECAO_VARIABLES = new TemplateVariables(
+            new TemplateVariable("projecao", TemplateVariable.VariableType.REQUEST_PARAM));
+
     public Link linkToPedido(String codigo, String rel) {
         return linkTo(methodOn(PedidoController.class).buscar(codigo)).withRel(rel);
     }
@@ -28,9 +31,9 @@ public class LinkHelper {
         return linkToPedido(codigo, IanaLinkRelations.SELF.value());
     }
 
-    public Link linkToPedidos() {
+    public Link linkToPedidos(String rel) {
         return Link.of(UriTemplate.of(String.valueOf(linkTo(PedidoController.class).toUri()),
-                PAGE_VARIABLES.concat(FILTER_VARIABLES)), "pedidos");
+                PAGE_VARIABLES.concat(FILTER_VARIABLES)), rel);
     }
 
     public Link linkToConfirmacaoPedido(String codigoPedido, String rel) {
@@ -63,6 +66,22 @@ public class LinkHelper {
 
     public Link linkToRestauranteFormasPagamento(Long restauranteId, String rel) {
         return linkTo(methodOn(RestauranteFormaPagamentoController.class).listar(restauranteId)).withRel(rel);
+    }
+
+    public Link linkToRestauranteAbertura(Long restauranteId, String rel) {
+        return linkTo(methodOn(RestauranteController.class).abrir(restauranteId)).withRel(rel);
+    }
+
+    public Link linkToRestauranteFechamento(Long restauranteId, String rel) {
+        return linkTo(methodOn(RestauranteController.class).fechar(restauranteId)).withRel(rel);
+    }
+
+    public Link linkToRestauranteAtivacao(Long restauranteId, String rel) {
+        return linkTo(methodOn(RestauranteController.class).ativar(restauranteId)).withRel(rel);
+    }
+
+    public Link linkToRestauranteInativacao(Long restauranteId, String rel) {
+        return linkTo(methodOn(RestauranteController.class).inativar(restauranteId)).withRel(rel);
     }
 
     public Link linkToUsuario(Long usuarioId, String rel) {

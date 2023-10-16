@@ -10,6 +10,7 @@ import br.dev.pauloroberto.algafood.domain.exception.NegocioException;
 import br.dev.pauloroberto.algafood.domain.model.FormaPagamento;
 import br.dev.pauloroberto.algafood.domain.service.CadastroFormaPagamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,7 +35,7 @@ public class FormaPagamentoController implements FormaPagamentoControllerOpenApi
     private FormaPagamentoDomainObjectAssembler formaPagamentoDomainObjectAssembler;
 
     @GetMapping
-    public ResponseEntity<List<FormaPagamentoDto>> listar(ServletWebRequest request) {
+    public ResponseEntity<CollectionModel<FormaPagamentoDto>> listar(ServletWebRequest request) {
         desabilitarShallowETag(request);
 
         String eTag = definirETag();
@@ -42,7 +43,8 @@ public class FormaPagamentoController implements FormaPagamentoControllerOpenApi
         if (eTagInalterada(request, eTag)) return null;
 
         List<FormaPagamento> formasPagamento = cadastroFormaPagamentoService.listar();
-        List<FormaPagamentoDto> formasPagamentoDto = formaPagamentoDtoAssembler.toDtoList(formasPagamento);
+        CollectionModel<FormaPagamentoDto> formasPagamentoDto =
+                formaPagamentoDtoAssembler.toCollectionModel(formasPagamento);
 
         return ResponseEntity.ok()
                 .cacheControl(CacheControl.maxAge(10, TimeUnit.SECONDS))
