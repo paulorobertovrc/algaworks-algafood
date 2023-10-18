@@ -156,13 +156,18 @@ public class LinkHelper {
         return linkToEstados(IanaLinkRelations.SELF.value());
     }
 
+    public Link linkToProdutos(Long restauranteId, String rel) {
+        return linkTo(methodOn(RestauranteProdutoController.class)
+                .buscar(restauranteId, null)).withRel(rel);
+    }
+
+    public Link linkToProdutos(Long restauranteId) {
+        return linkToProdutos(restauranteId, IanaLinkRelations.SELF.value());
+    }
+
     public Link linkToProduto(Long restauranteId, Long produtoId, String rel) {
         return linkTo(methodOn(RestauranteProdutoController.class)
                 .buscar(restauranteId, produtoId)).withRel(rel);
-    }
-
-    public Link linkToProduto(Long restauranteId, Long produtoId) {
-        return linkToProduto(restauranteId, produtoId, IanaLinkRelations.SELF.value());
     }
 
     public Link linkToCozinhas(String rel) {
@@ -199,6 +204,15 @@ public class LinkHelper {
     public Link linkToRestauranteResponsavelAssociacao(Long restauranteId, String associar) {
         return linkTo(methodOn(RestauranteUsuarioResponsavelController.class)
                 .associar(restauranteId, null)).withRel(associar);
+    }
+
+    public Link linkToFotoProduto(Long restauranteId, Long produtoId, String rel) {
+        return linkTo(methodOn(RestauranteProdutoFotoController.class)
+                .buscar(restauranteId, produtoId)).withRel(rel);
+    }
+
+    public Link linkToFotoProduto(Long restauranteId, Long produtoId) {
+        return linkToFotoProduto(restauranteId, produtoId, IanaLinkRelations.SELF.value());
     }
 
 }

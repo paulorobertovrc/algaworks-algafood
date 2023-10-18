@@ -2,13 +2,16 @@ package br.dev.pauloroberto.algafood.api.controller;
 
 import br.dev.pauloroberto.algafood.api.assembler.ProdutoDomainObjectAssembler;
 import br.dev.pauloroberto.algafood.api.assembler.ProdutoDtoAssembler;
+import br.dev.pauloroberto.algafood.api.helper.LinkHelper;
 import br.dev.pauloroberto.algafood.api.model.ProdutoDto;
 import br.dev.pauloroberto.algafood.api.model.input.ProdutoInputDto;
 import br.dev.pauloroberto.algafood.api.openapi.controller.RestauranteProdutoControllerOpenApi;
 import br.dev.pauloroberto.algafood.domain.model.Produto;
+import br.dev.pauloroberto.algafood.domain.model.Restaurante;
 import br.dev.pauloroberto.algafood.domain.service.CadastroProdutoService;
 import br.dev.pauloroberto.algafood.domain.service.CadastroRestauranteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +23,7 @@ import java.util.List;
 @RequestMapping(path = "/restaurantes/{restauranteId}/produtos", produces = MediaType.APPLICATION_JSON_VALUE)
 //@ApiIgnore // Desnecessária após a criação do RestauranteProdutoControllerOpenApi
 public class RestauranteProdutoController implements RestauranteProdutoControllerOpenApi {
+
     @Autowired
     private CadastroRestauranteService cadastroRestauranteService;
     @Autowired
@@ -28,13 +32,25 @@ public class RestauranteProdutoController implements RestauranteProdutoControlle
     private ProdutoDtoAssembler produtoDtoAssembler;
     @Autowired
     private ProdutoDomainObjectAssembler produtoDomainObjectAssembler;
+    @Autowired
+    private LinkHelper linkHelper;
 
+    @Override
     @GetMapping
-    public List<ProdutoDto> listar(@PathVariable Long restauranteId,
-                                   @RequestParam(required = false) boolean incluirInativos) {
-        List<Produto> produtos = cadastroProdutoService.listar(restauranteId, incluirInativos);
+    public CollectionModel<ProdutoDto> listar(@PathVariable Long restauranteId,
+                                              @RequestParam(required = false) Boolean incluirInativos) {
 
-        return produtoDtoAssembler.toDtoList(produtos);
+        Restaurante restaurante = cadastroRestauranteService.verificarSeExiste(restauranteId);
+        List<Produto> todosProdutos = null;
+
+        if (incluirInativos) {
+            todosProdutos = cadastroProdutoService.listarTodos(restaurante.getId());
+        } else {
+            todosProdutos = cadastroProdutoService.listarAtivos(restaurante.getId());
+        }
+
+        return produtoDtoAssembler.toCollectionModel(todosProdutos)
+                .add(linkHelper.linkToProdutos(restauranteId));
     }
 
     @GetMapping("/{produtoId}")

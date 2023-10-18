@@ -25,13 +25,10 @@ public class RestauranteDtoAssembler extends RepresentationModelAssemblerSupport
 
     @Override
     public @NotNull RestauranteDto toModel(@NotNull Restaurante restaurante) {
-        RestauranteDto restauranteDto = modelMapper.map(restaurante, RestauranteDto.class);
+        RestauranteDto restauranteDto = createModelWithId(restaurante.getId(), restaurante);
+        modelMapper.map(restaurante, restauranteDto);
 
-        restauranteDto.add(linkHelper.linkToRestaurante(restauranteDto.getId()));
         restauranteDto.add(linkHelper.linkToRestaurantes("restaurantes"));
-        restauranteDto.add(linkHelper.linkToCozinha(restauranteDto.getCozinha().getId()));
-        restauranteDto.add(linkHelper.linkToRestauranteFormasPagamento(restauranteDto.getId(), "formas-pagamento"));
-        restauranteDto.add(linkHelper.linkToResponsaveisRestaurante(restauranteDto.getId(), "responsaveis"));
 
         if (restaurante.ativacaoPermitida()) {
             restauranteDto.add(linkHelper.linkToRestauranteAtivacao(restauranteDto.getId(), "ativar"));
@@ -48,6 +45,17 @@ public class RestauranteDtoAssembler extends RepresentationModelAssemblerSupport
         if (restaurante.fechamentoPermitido()) {
             restauranteDto.add(linkHelper.linkToRestauranteFechamento(restauranteDto.getId(), "fechar"));
         }
+
+        restauranteDto.add(linkHelper.linkToProdutos(restauranteDto.getId(), "produtos"));
+        restauranteDto.getCozinha().add(linkHelper.linkToCozinha(restauranteDto.getCozinha().getId()));
+
+        if (restauranteDto.getEndereco() != null && restauranteDto.getEndereco().getCidade() != null) {
+            restauranteDto.getEndereco().getCidade().add(
+                    linkHelper.linkToCidade(restauranteDto.getEndereco().getCidade().getId()));
+        }
+
+        restauranteDto.add(linkHelper.linkToRestauranteFormasPagamento(restauranteDto.getId(), "formas-pagamento"));
+        restauranteDto.add(linkHelper.linkToResponsaveisRestaurante(restauranteDto.getId(), "responsaveis"));
 
         return restauranteDto;
     }

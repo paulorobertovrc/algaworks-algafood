@@ -34,7 +34,7 @@ public class PedidoDtoAssembler extends RepresentationModelAssemblerSupport<Pedi
                 linkHelper.linkToCidade(pedido.getEnderecoEntrega().getCidade().getId()));
 
         pedidoDto.getItens().forEach(item -> item.add(
-                linkHelper.linkToProduto(pedidoDto.getRestaurante().getId(), item.getProdutoId(), "produto")));
+                linkHelper.linkToProdutos(pedidoDto.getRestaurante().getId(), "produtos")));
 
         if (pedido.podeSerConfirmado()) {
             pedidoDto.add(linkHelper.linkToConfirmacaoPedido(pedidoDto.getCodigo(), "confirmar"));

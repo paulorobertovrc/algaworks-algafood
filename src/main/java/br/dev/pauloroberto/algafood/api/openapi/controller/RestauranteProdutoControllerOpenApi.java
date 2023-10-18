@@ -11,9 +11,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.MediaType;
-
-import java.util.List;
 
 @Api(tags = "Produtos")
 public interface RestauranteProdutoControllerOpenApi {
@@ -28,9 +27,10 @@ public interface RestauranteProdutoControllerOpenApi {
                     schema = @Schema(implementation = Problem.class)
             ))
     })
-    List<ProdutoDto> listar(@ApiParam(value = "ID do restaurante", example = "1", required = true) Long restauranteId,
-                            @ApiParam(value = "Indica se os restaurantes inativos devem ser incluídos no resultado " +
-                                    "da listagem", example = "false", defaultValue = "false") boolean incluirInativos);
+    CollectionModel<ProdutoDto> listar(
+            @ApiParam(value = "ID do restaurante", example = "1", required = true) Long restauranteId,
+            @ApiParam(value = "Indica se os restaurantes inativos devem ser incluídos no resultado da listagem",
+                    example = "false", defaultValue = "false") Boolean incluirInativos);
 
     @ApiModelProperty("Busca um produto de um restaurante")
     @ApiResponses(value = {
