@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 @Api(tags = "Restaurantes")
 public interface RestauranteFormaPagamentoControllerOpenApi {
@@ -30,7 +31,7 @@ public interface RestauranteFormaPagamentoControllerOpenApi {
                             schema = @Schema(implementation = Problem.class)
             ))
     })
-    void associar(@ApiParam(value = "ID do restaurante", example = "1", required = true) Long restauranteId,
+    ResponseEntity<Void> associar(@ApiParam(value = "ID do restaurante", example = "1", required = true) Long restauranteId,
                   @ApiParam(value = "ID da forma de pagamento", example = "1", required = true) Long formaPagamentoId);
 
     @ApiModelProperty("Desassocia uma forma de pagamento de um restaurante")
@@ -41,7 +42,7 @@ public interface RestauranteFormaPagamentoControllerOpenApi {
                             schema = @Schema(implementation = Problem.class)
             ))
     })
-    void desassociar(@ApiParam(value = "ID do restaurante", example = "1", required = true) Long restauranteId,
+    ResponseEntity<Void> desassociar(@ApiParam(value = "ID do restaurante", example = "1", required = true) Long restauranteId,
                      @ApiParam(value = "ID da forma de pagamento", example = "1", required = true)
                      Long formaPagamentoId);
 

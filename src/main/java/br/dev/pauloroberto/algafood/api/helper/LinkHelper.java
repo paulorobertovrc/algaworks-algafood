@@ -181,4 +181,24 @@ public class LinkHelper {
         return linkToCozinha(cozinhaId, IanaLinkRelations.SELF.value());
     }
 
+    public Link linkToRestauranteFormaPagamentoDesassociacao(Long restauranteId, Long formaPagamentoId, String rel) {
+        return linkTo(methodOn(RestauranteFormaPagamentoController.class)
+                .desassociar(restauranteId, formaPagamentoId)).withRel(rel);
+    }
+
+    public Link linkToRestauranteFormaPagamentoAssociacao(Long restauranteId, String rel) {
+        return linkTo(methodOn(RestauranteFormaPagamentoController.class)
+                .associar(restauranteId, null)).withRel(rel);
+    }
+
+    public Link linkToRestauranteResponsavelDesassociacao(Long restauranteId, Long usuarioId, String rel) {
+        return linkTo(methodOn(RestauranteUsuarioResponsavelController.class)
+                .desassociar(restauranteId, usuarioId)).withRel(rel);
+    }
+
+    public Link linkToRestauranteResponsavelAssociacao(Long restauranteId, String associar) {
+        return linkTo(methodOn(RestauranteUsuarioResponsavelController.class)
+                .associar(restauranteId, null)).withRel(associar);
+    }
+
 }

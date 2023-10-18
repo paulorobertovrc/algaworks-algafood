@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 @Api(tags = "Restaurantes")
 public interface RestauranteUsuarioResponsavelControllerOpenApi {
@@ -30,8 +31,9 @@ public interface RestauranteUsuarioResponsavelControllerOpenApi {
                             schema = @Schema(implementation = Problem.class)
             ))
     })
-    void associar(@ApiParam(value = "ID do restaurante", example = "1", required = true) Long restauranteId,
-                  @ApiParam(value = "ID do usuário", example = "1", required = true) Long usuarioId);
+    ResponseEntity<Void> associar(@ApiParam(value = "ID do restaurante", example = "1", required = true)
+                                  Long restauranteId,
+                            @ApiParam(value = "ID do usuário", example = "1", required = true) Long usuarioId);
 
     @ApiModelProperty("Desassocia um usuário responsável de um restaurante")
     @ApiResponses({
@@ -41,7 +43,8 @@ public interface RestauranteUsuarioResponsavelControllerOpenApi {
                             schema = @Schema(implementation = Problem.class)
                     ))
     })
-    void desassociar(@ApiParam(value = "ID do restaurante", example = "1", required = true) Long restauranteId,
+    ResponseEntity<Void> desassociar(@ApiParam(value = "ID do restaurante", example = "1", required = true)
+                                     Long restauranteId,
                      @ApiParam(value = "ID do usuário", example = "1", required = true) Long usuarioId);
 
 }
