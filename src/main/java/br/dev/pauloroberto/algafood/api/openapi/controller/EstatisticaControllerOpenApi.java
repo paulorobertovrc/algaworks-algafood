@@ -1,5 +1,6 @@
 package br.dev.pauloroberto.algafood.api.openapi.controller;
 
+import br.dev.pauloroberto.algafood.api.controller.EstatisticaController.EstatisticasModel;
 import br.dev.pauloroberto.algafood.domain.filter.VendaDiariaFilter;
 import br.dev.pauloroberto.algafood.domain.model.dto.VendaDiaria;
 import io.swagger.annotations.*;
@@ -9,6 +10,10 @@ import java.util.List;
 
 @Api(tags = "Estatísticas")
 public interface EstatisticaControllerOpenApi {
+
+    @ApiOperation(value = "Estatísticas", hidden = true)
+    EstatisticasModel estatisticas();
+
     @ApiOperation("Retorna consulta de vendas diárias no formato JSON")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "restauranteId", value = "ID do restaurante", example = "1", dataType = "int"),
