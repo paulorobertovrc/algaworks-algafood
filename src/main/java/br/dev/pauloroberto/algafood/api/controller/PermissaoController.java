@@ -4,22 +4,25 @@ import br.dev.pauloroberto.algafood.api.assembler.PermissaoDomainObjectAssembler
 import br.dev.pauloroberto.algafood.api.assembler.PermissaoDtoAssembler;
 import br.dev.pauloroberto.algafood.api.model.PermissaoDto;
 import br.dev.pauloroberto.algafood.api.model.input.PermissaoInputDto;
+import br.dev.pauloroberto.algafood.api.openapi.controller.PermissaoControllerOpenApi;
 import br.dev.pauloroberto.algafood.domain.exception.PermissaoNaoEncontradaException;
 import br.dev.pauloroberto.algafood.domain.model.Permissao;
 import br.dev.pauloroberto.algafood.domain.service.CadastroPermissaoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
-@RequestMapping("/permissoes")
+@RequestMapping(path = "/permissoes", produces = MediaType.APPLICATION_JSON_VALUE)
 @Api(tags = "Permissões")
-public class PermissaoController {
+public class PermissaoController implements PermissaoControllerOpenApi {
+
     @Autowired
     private CadastroPermissaoService cadastroPermissaoService;
     @Autowired
@@ -29,8 +32,8 @@ public class PermissaoController {
 
     @GetMapping
     @ApiOperation("Lista as permissões")
-    public List<PermissaoDto> listar() {
-        return permissaoDtoAssembler.toDtoList(cadastroPermissaoService.listar());
+    public CollectionModel<PermissaoDto> listar() {
+        return permissaoDtoAssembler.toCollectionModel(cadastroPermissaoService.listar());
     }
 
     @GetMapping("/{id}")

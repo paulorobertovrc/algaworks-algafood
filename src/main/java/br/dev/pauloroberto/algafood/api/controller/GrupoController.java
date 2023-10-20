@@ -2,14 +2,15 @@ package br.dev.pauloroberto.algafood.api.controller;
 
 import br.dev.pauloroberto.algafood.api.assembler.GrupoDomainObjectAssembler;
 import br.dev.pauloroberto.algafood.api.assembler.GrupoDtoAssembler;
-import br.dev.pauloroberto.algafood.api.openapi.controller.GrupoControllerOpenApi;
 import br.dev.pauloroberto.algafood.api.model.GrupoDto;
 import br.dev.pauloroberto.algafood.api.model.input.GrupoInputDto;
+import br.dev.pauloroberto.algafood.api.openapi.controller.GrupoControllerOpenApi;
 import br.dev.pauloroberto.algafood.domain.exception.GrupoNaoEncontradoException;
 import br.dev.pauloroberto.algafood.domain.exception.NegocioException;
 import br.dev.pauloroberto.algafood.domain.model.Grupo;
 import br.dev.pauloroberto.algafood.domain.service.CadastroGrupoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -27,9 +28,12 @@ public class GrupoController implements GrupoControllerOpenApi {
     @Autowired
     private GrupoDomainObjectAssembler grupoDomainObjectAssembler;
 
+    @Override
     @GetMapping
-    public List<GrupoDto> listar() {
-        return grupoDtoAssembler.toDtoList(cadastroGrupoService.listar());
+    public CollectionModel<GrupoDto> listar() {
+        List<Grupo> grupos = cadastroGrupoService.listar();
+
+        return grupoDtoAssembler.toCollectionModel(grupos);
     }
 
     @GetMapping("/{id}")

@@ -3,10 +3,13 @@ package br.dev.pauloroberto.algafood.api.model;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 @Setter
 @Getter
-public class GrupoDto {
+@Relation(collectionRelation = "grupos")
+public class GrupoDto extends RepresentationModel<GrupoDto> {
     @ApiModelProperty(example = "1")
     private Long id;
 
