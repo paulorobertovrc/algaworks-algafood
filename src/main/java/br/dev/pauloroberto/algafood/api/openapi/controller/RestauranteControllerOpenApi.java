@@ -31,6 +31,7 @@ public interface RestauranteControllerOpenApi {
             allowableValues = "apenas-nome, completo", paramType = "query", type = "string")
     CollectionModel<RestauranteDto> listar();
 
+    @ApiIgnore
     @ApiOperation(value = "Lista restaurantes", hidden = true)
     CollectionModel<RestauranteApenasNomeDto> listarApenasNomes();
 

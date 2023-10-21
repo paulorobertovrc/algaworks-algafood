@@ -1,11 +1,8 @@
 package br.dev.pauloroberto.algafood.core.openapi;
 
 import br.dev.pauloroberto.algafood.api.exception.handler.Problem;
-import br.dev.pauloroberto.algafood.api.model.CozinhaDto;
-import br.dev.pauloroberto.algafood.api.model.PedidoResumoDto;
-import br.dev.pauloroberto.algafood.api.openapi.model.CozinhasModelOpenApi;
-import br.dev.pauloroberto.algafood.api.openapi.model.PageableModelOpenApi;
-import br.dev.pauloroberto.algafood.api.openapi.model.PedidosResumoModelOpenApi;
+import br.dev.pauloroberto.algafood.api.model.*;
+import br.dev.pauloroberto.algafood.api.openapi.model.*;
 import com.fasterxml.classmate.TypeResolver;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -14,6 +11,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.Links;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -70,10 +70,29 @@ public class SpringFoxConfig {
 //                )) // Adiciona um parâmetro global para todos os endpoints. Este parâmetro é utilizado para filtrar as propriedades que serão retornadas na resposta.
                 .additionalModels(typeResolver.resolve(Problem.class))
                 .directModelSubstitute(Pageable.class, PageableModelOpenApi.class) // Substitui o Pageable pelo PageableModelOpenApi na documentação
-                .alternateTypeRules(newRule(typeResolver.resolve(Page.class, CozinhaDto.class),
+                .directModelSubstitute(Links.class, LinksModelOpenApi.class) // Substitui a classe Links do Spring HATEOAS pela LinksModelOpenApi na documentação
+                .alternateTypeRules(newRule(typeResolver.resolve(PagedModel.class, CozinhaDto.class),
                         CozinhasModelOpenApi.class)) // Substitui o Page<CozinhaDto> pelo CozinhasModelOpenApi na documentação
                 .alternateTypeRules(newRule(typeResolver.resolve(Page.class, PedidoResumoDto.class),
                         PedidosResumoModelOpenApi.class)) // Substitui o Page<CozinhaDto> pelo CozinhasModelOpenApi na documentação
+                .alternateTypeRules(newRule(typeResolver.resolve(CollectionModel.class, CidadeDto.class),
+                        CidadesModelOpenApi.class))
+                .alternateTypeRules(newRule(typeResolver.resolve(CollectionModel.class, EstadoDto.class),
+                        EstadosModelOpenApi.class))
+                .alternateTypeRules(newRule(typeResolver.resolve(CollectionModel.class, FormaPagamentoDto.class),
+                        FormasPagamentoModelOpenApi.class))
+                .alternateTypeRules(newRule(typeResolver.resolve(CollectionModel.class, GrupoDto.class),
+                        GruposModelOpenApi.class))
+                .alternateTypeRules(newRule(typeResolver.resolve(CollectionModel.class, PermissaoDto.class),
+                        PermissoesModelOpenApi.class))
+                .alternateTypeRules(newRule(typeResolver.resolve(CollectionModel.class, PedidoResumoDto.class),
+                        PedidosResumoModelOpenApi.class))
+                .alternateTypeRules(newRule(typeResolver.resolve(CollectionModel.class, ProdutoDto.class),
+                        ProdutosModelOpenApi.class))
+                .alternateTypeRules(newRule(typeResolver.resolve(CollectionModel.class, RestauranteBasicoDto.class),
+                        RestaurantesBasicoModelOpenApi.class))
+                .alternateTypeRules(newRule(typeResolver.resolve(CollectionModel.class, UsuarioDto.class),
+                        UsuariosModelOpenApi.class))
                 .ignoredParameterTypes(ServletWebRequest.class, FilterProvider.class, MappingJacksonValue.class) // Ignora o ServletWebRequest na documentação
                 .apiInfo(apiInfo())
                 .tags(new Tag("Cidades", "Gerencia as cidades"),

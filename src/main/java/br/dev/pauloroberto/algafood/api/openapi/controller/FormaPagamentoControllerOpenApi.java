@@ -3,6 +3,7 @@ package br.dev.pauloroberto.algafood.api.openapi.controller;
 import br.dev.pauloroberto.algafood.api.exception.handler.Problem;
 import br.dev.pauloroberto.algafood.api.model.FormaPagamentoDto;
 import br.dev.pauloroberto.algafood.api.model.input.FormaPagamentoInputDto;
+import br.dev.pauloroberto.algafood.api.openapi.model.FormasPagamentoModelOpenApi;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -17,10 +18,10 @@ import org.springframework.web.context.request.ServletWebRequest;
 
 @Api(tags = "Formas de Pagamento")
 public interface FormaPagamentoControllerOpenApi {
-    @ApiOperation("Lista as formas de pagamento")
+    @ApiOperation(value = "Lista as formas de pagamento", response = FormasPagamentoModelOpenApi.class)
     ResponseEntity<CollectionModel<FormaPagamentoDto>> listar(ServletWebRequest request);
 
-    @ApiOperation("Busca uma forma de pagamento por ID")
+    @ApiOperation(value = "Busca uma forma de pagamento por ID", response = FormasPagamentoModelOpenApi.class)
     @ApiResponses({
             @ApiResponse(responseCode = "400", description = "ID da cozinha inválido", content = @Content(
                     mediaType = MediaType.APPLICATION_JSON_VALUE,
