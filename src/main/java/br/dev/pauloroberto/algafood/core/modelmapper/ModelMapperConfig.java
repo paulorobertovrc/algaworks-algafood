@@ -1,6 +1,6 @@
 package br.dev.pauloroberto.algafood.core.modelmapper;
 
-import br.dev.pauloroberto.algafood.api.model.input.ItemPedidoInputDto;
+import br.dev.pauloroberto.algafood.api.v1.model.input.ItemPedidoInputDto;
 import br.dev.pauloroberto.algafood.domain.model.ItemPedido;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;

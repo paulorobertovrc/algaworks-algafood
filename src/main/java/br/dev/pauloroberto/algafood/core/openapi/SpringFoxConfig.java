@@ -1,8 +1,8 @@
 package br.dev.pauloroberto.algafood.core.openapi;
 
 import br.dev.pauloroberto.algafood.api.exception.handler.Problem;
-import br.dev.pauloroberto.algafood.api.model.*;
-import br.dev.pauloroberto.algafood.api.openapi.model.*;
+import br.dev.pauloroberto.algafood.api.v1.model.*;
+import br.dev.pauloroberto.algafood.api.v1.openapi.model.*;
 import com.fasterxml.classmate.TypeResolver;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
