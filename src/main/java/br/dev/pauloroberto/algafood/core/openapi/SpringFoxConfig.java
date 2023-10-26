@@ -3,12 +3,17 @@ package br.dev.pauloroberto.algafood.core.openapi;
 import br.dev.pauloroberto.algafood.api.exception.handler.Problem;
 import br.dev.pauloroberto.algafood.api.v1.model.*;
 import br.dev.pauloroberto.algafood.api.v1.openapi.model.*;
+import br.dev.pauloroberto.algafood.api.v2.model.CidadeDtoV2;
+import br.dev.pauloroberto.algafood.api.v2.model.CozinhaDtoV2;
+import br.dev.pauloroberto.algafood.api.v2.openapi.model.CidadesModelOpenApiV2;
+import br.dev.pauloroberto.algafood.api.v2.openapi.model.CozinhasModelOpenApiV2;
 import com.fasterxml.classmate.TypeResolver;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.CollectionModel;
@@ -29,6 +34,11 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.json.JacksonModuleRegistrar;
 import springfox.documentation.spring.web.plugins.Docket;
 
+import java.io.File;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLStreamHandler;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -44,15 +54,17 @@ public class SpringFoxConfig {
     // O Docket é o objeto que contém as configurações do Swagger. Ele é criado através do método apiDocket(), que retorna um Docket contendo as configurações.
 
     @Bean
-    public Docket apiDocket() {
+    public Docket apiDocketV1() {
         TypeResolver typeResolver = new TypeResolver();
 
         return new Docket(DocumentationType.OAS_30)
+                .groupName("V1")
                 .select()
                     .apis(RequestHandlerSelectors.basePackage("br.dev.pauloroberto.algafood.api")) // Exibe apenas os endpoints de um pacote específico
     //                .paths(PathSelectors.ant("/restaurantes/*")) // Este filtro exibe apenas os endpoints que começam com /restaurantes/
     //                .paths(PathSelectors.ant("/restaurantes/**")) // Este filtro exibe apenas os endpoints que começam com /restaurantes/ e terminam com qualquer coisa
-                    .paths(PathSelectors.any()) // Este filtro exibe todos os endpoints
+//                    .paths(PathSelectors.any()) // Este filtro exibe todos os endpoints
+                    .paths(PathSelectors.ant("/v1/**")) // Este filtro exibe apenas os endpoints que começam com /v1/
                     .build()
                 .useDefaultResponseMessages(false)
                 .globalResponses(HttpMethod.GET, globalGetResponseMessages())
@@ -94,7 +106,7 @@ public class SpringFoxConfig {
                 .alternateTypeRules(newRule(typeResolver.resolve(CollectionModel.class, UsuarioDto.class),
                         UsuariosModelOpenApi.class))
                 .ignoredParameterTypes(ServletWebRequest.class, FilterProvider.class, MappingJacksonValue.class) // Ignora o ServletWebRequest na documentação
-                .apiInfo(apiInfo())
+                .apiInfo(apiInfoV1())
                 .tags(new Tag("Cidades", "Gerencia as cidades"),
                         new Tag("Grupos", "Gerencia os grupos de usuários"),
                         new Tag("Cozinhas", "Gerencia as cozinhas"),
@@ -106,6 +118,35 @@ public class SpringFoxConfig {
                         new Tag("Usuários", "Gerencia os usuários"),
                         new Tag("Estatísticas", "Estatísticas da AlgaFood"),
                         new Tag("Permissões", "Gerencia as permissões"));
+    }
+
+    @Bean
+    public Docket apiDocketV2() {
+        var typeResolver = new TypeResolver();
+
+        return new Docket(DocumentationType.OAS_30)
+                .groupName("V2")
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("br.dev.pauloroberto.algafood.api"))
+                .paths(PathSelectors.ant("/v2/**")) // Este filtro exibe apenas os endpoints que começam com /v2/
+                .build()
+                .useDefaultResponseMessages(false)
+                .globalResponses(HttpMethod.GET, globalGetResponseMessages())
+                .globalResponses(HttpMethod.POST, globalPostPutResponseMessages())
+                .globalResponses(HttpMethod.PUT, globalPostPutResponseMessages())
+                .globalResponses(HttpMethod.DELETE, globalDeleteResponseMessages())
+                .additionalModels(typeResolver.resolve(Problem.class))
+                .ignoredParameterTypes(ServletWebRequest.class, URL.class, URI.class, URLStreamHandler.class, Resource.class,
+                        File.class, InputStream.class)
+                .directModelSubstitute(Pageable.class, PageableModelOpenApi.class)
+                .directModelSubstitute(Links.class, LinksModelOpenApi.class)
+                .alternateTypeRules(newRule(typeResolver.resolve(CollectionModel.class, CidadeDtoV2.class),
+                        CidadesModelOpenApiV2.class))
+                .alternateTypeRules(newRule(typeResolver.resolve(PagedModel.class, CozinhaDtoV2.class),
+                        CozinhasModelOpenApiV2.class))
+                .apiInfo(apiInfoV2())
+                .tags(new Tag("Cidades", "Gerencia as cidades"),
+                        new Tag("Cozinhas", "Gerencia as cozinhas"));
     }
 
     @Bean
@@ -170,11 +211,21 @@ public class SpringFoxConfig {
                         .build());
     }
 
-    public ApiInfo apiInfo() {
+    public ApiInfo apiInfoV1() {
         return new ApiInfoBuilder()
                 .title("AlgaFood API")
                 .description("API aberta para clientes e restaurantes")
-                .version("0.1")
+                .version("1")
+                .contact(new Contact("Paulo Roberto", "site", "email"))
+                .license("MIT")
+                .build();
+    }
+
+    public ApiInfo apiInfoV2() {
+        return new ApiInfoBuilder()
+                .title("AlgaFood API")
+                .description("API aberta para clientes e restaurantes")
+                .version("2")
                 .contact(new Contact("Paulo Roberto", "site", "email"))
                 .license("MIT")
                 .build();

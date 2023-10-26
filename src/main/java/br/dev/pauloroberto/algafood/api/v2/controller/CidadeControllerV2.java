@@ -4,6 +4,7 @@ import br.dev.pauloroberto.algafood.api.v2.assembler.CidadeDomainObjectAssembler
 import br.dev.pauloroberto.algafood.api.v2.assembler.CidadeDtoAssemblerV2;
 import br.dev.pauloroberto.algafood.api.v2.model.CidadeDtoV2;
 import br.dev.pauloroberto.algafood.api.v2.model.input.CidadeInputDtoV2;
+import br.dev.pauloroberto.algafood.api.v2.openapi.controller.CidadeControllerOpenApiV2;
 import br.dev.pauloroberto.algafood.core.helper.ResourceUriHelper;
 import br.dev.pauloroberto.algafood.domain.exception.EstadoNaoEncontradoException;
 import br.dev.pauloroberto.algafood.domain.exception.NegocioException;
@@ -19,7 +20,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping(path = "/v2/cidades", produces = MediaType.APPLICATION_JSON_VALUE)
-public class CidadeControllerV2 {
+public class CidadeControllerV2 implements CidadeControllerOpenApiV2 {
 
     @Autowired
     private CadastroCidadeService cadastroCidadeService;
@@ -28,18 +29,21 @@ public class CidadeControllerV2 {
     @Autowired
     private CidadeDomainObjectAssemblerV2 cidadeDomainObjectAssembler;
 
+    @Override
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public CollectionModel<CidadeDtoV2> listar() {
         return cidadeDtoAssembler.toCollectionModel(
                 cadastroCidadeService.listar());
     }
 
+    @Override
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public CidadeDtoV2 buscar(@PathVariable Long id) {
         return cidadeDtoAssembler.toModel(
                 cadastroCidadeService.verificarSeExiste(id));
     }
 
+    @Override
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public CidadeDtoV2 adicionar(@RequestBody @Valid CidadeInputDtoV2 cidadeInput) {
@@ -54,6 +58,7 @@ public class CidadeControllerV2 {
         }
     }
 
+    @Override
     @PutMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public CidadeDtoV2 atualizar(@PathVariable Long id, @RequestBody @Valid CidadeInputDtoV2 cidadeInput) {
         try {
@@ -65,6 +70,11 @@ public class CidadeControllerV2 {
         } catch (EstadoNaoEncontradoException e) {
             throw new NegocioException(e.getMessage(), e);
         }
+    }
+
+    @Override
+    public void remover(Long id) {
+        cadastroCidadeService.excluir(id);
     }
 
 }
