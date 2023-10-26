@@ -10,6 +10,10 @@ import javax.servlet.Filter;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
+//    @Autowired
+    private ApiDeprecationHandler apiDeprecationHandler;
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
@@ -27,5 +31,10 @@ public class WebConfig implements WebMvcConfigurer {
     public Filter shallowEtagHeaderFilter() {
         return new ShallowEtagHeaderFilter(); // Habilita o suporte a shallow ETag
     }
+
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        registry.addInterceptor(apiDeprecationHandler);
+//    }
 
 }
