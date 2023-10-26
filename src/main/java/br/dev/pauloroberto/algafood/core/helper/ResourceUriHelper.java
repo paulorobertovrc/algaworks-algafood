@@ -1,4 +1,4 @@
-package br.dev.pauloroberto.algafood.api.v1.helper;
+package br.dev.pauloroberto.algafood.core.helper;
 
 import lombok.experimental.UtilityClass;
 import org.springframework.http.HttpHeaders;

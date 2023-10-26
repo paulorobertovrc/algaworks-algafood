@@ -20,7 +20,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/restaurantes/{restauranteId}/produtos", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/v1/restaurantes/{restauranteId}/produtos", produces = MediaType.APPLICATION_JSON_VALUE)
 //@ApiIgnore // Desnecessária após a criação do RestauranteProdutoControllerOpenApi
 public class RestauranteProdutoController implements RestauranteProdutoControllerOpenApi {
 
