@@ -6,6 +6,7 @@ import br.dev.pauloroberto.algafood.domain.exception.NegocioException;
 import com.fasterxml.jackson.databind.JsonMappingException.Reference;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.PropertyBindingException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.Objects;
 
 @ControllerAdvice
+@Slf4j
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     public static final String MSG_ERRO_DE_SISTEMA = "Erro interno inesperado. Tente novamente e, se o problema persistir, contate o administrador do sistema.";
     @Autowired
@@ -76,7 +78,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 ProblemType.ERRO_DE_SISTEMA)
                 .build();
 
-        e.printStackTrace(); // TODO: excluir em produção
+        log.error("[LOG][ERROR]" + e.getMessage(), e);
 
         return handleExceptionInternal(e, problem, new HttpHeaders(), status, request);
     }

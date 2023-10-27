@@ -8,6 +8,8 @@ import br.dev.pauloroberto.algafood.api.v2.openapi.controller.CozinhaControllerO
 import br.dev.pauloroberto.algafood.domain.model.Cozinha;
 import br.dev.pauloroberto.algafood.domain.repository.CozinhaRepository;
 import br.dev.pauloroberto.algafood.domain.service.CadastroCozinhaService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +26,10 @@ import javax.validation.Valid;
 @RequestMapping(path = "/v2/cozinhas", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CozinhaControllerV2 implements CozinhaControllerOpenApiV2 {
 
+    // Pode ser substituído pela anotação @Slf4j do Lombok
+    // Nesse caso, os métodos serão acessados diretamente pelo objeto "log"
+     private static final Logger logger = LoggerFactory.getLogger(CozinhaControllerV2.class);
+
     @Autowired
     private CozinhaRepository cozinhaRepository;
     @Autowired
@@ -38,6 +44,8 @@ public class CozinhaControllerV2 implements CozinhaControllerOpenApiV2 {
     @Override
     @GetMapping
     public PagedModel<CozinhaDtoV2> listar(@PageableDefault(size = 5) Pageable pageable) { // default size = 10
+        logger.info("[LOG][INFO] Consultando cozinhas | Total de registros: {}", cozinhaRepository.count());
+
         Page<Cozinha> cozinhasPage = cozinhaRepository.findAll(pageable);
 
         return pagedResourcesAssembler.toModel(cozinhasPage, cozinhaDtoAssembler);
